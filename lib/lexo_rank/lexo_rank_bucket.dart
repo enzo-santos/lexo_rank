@@ -30,7 +30,7 @@ class LexoRankBucket {
     final int var2 = var1.length;
     for (int var3 = 0; var3 < var2; ++var3) {
       final LexoRankBucket bucket = var1[var3];
-      if (bucket.equals(LexoRankBucket.from(bucketId.toString()))) {
+      if (bucket == LexoRankBucket.from(bucketId.toString())) {
         return bucket;
       }
     }
@@ -47,36 +47,36 @@ class LexoRankBucket {
   }
 
   LexoRankBucket next() {
-    if (equals(LexoRankBucket.bucket0)) {
+    if (this == LexoRankBucket.bucket0) {
       return LexoRankBucket.bucket1;
     }
-    if (equals(LexoRankBucket.bucket1)) {
+    if (this == LexoRankBucket.bucket1) {
       return LexoRankBucket.bucket2;
     }
-    return equals(LexoRankBucket.bucket2)
+    return this == LexoRankBucket.bucket2
         ? LexoRankBucket.bucket0
         : LexoRankBucket.bucket2;
   }
 
   LexoRankBucket prev() {
-    if (equals(LexoRankBucket.bucket0)) {
+    if (this == LexoRankBucket.bucket0) {
       return LexoRankBucket.bucket2;
     }
-    if (equals(LexoRankBucket.bucket1)) {
+    if (this == LexoRankBucket.bucket1) {
       return LexoRankBucket.bucket0;
     }
-    return equals(LexoRankBucket.bucket2)
+    return this == LexoRankBucket.bucket2
         ? LexoRankBucket.bucket1
         : LexoRankBucket.bucket0;
   }
 
-  bool equals(LexoRankBucket other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    // if (!other) {
-    //   return false;
-    //}
-    return value == other.value;
-  }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LexoRankBucket &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
 }

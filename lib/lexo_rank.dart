@@ -200,7 +200,7 @@ class LexoRank {
   }
 
   LexoRank between(LexoRank other) {
-    if (!bucket.equals(other.bucket)) {
+    if (bucket != other.bucket) {
       throw AssertionError('Between works only within the same bucket');
     }
     final int cmp = decimal.compareTo(other.decimal);

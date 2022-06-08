@@ -1,6 +1,6 @@
-import '../numeralSystems/lexoNumeralSystem.dart';
-import '../utils/stringBuilder.dart';
-import 'lexoHelper.dart' as lexoHelper;
+import '../numeral_systems/lexoNumeralSystem.dart';
+import '../utils/string_builder.dart';
+import 'lexo_helper.dart' as lexoHelper;
 import 'dart:math';
 
 class LexoInteger {

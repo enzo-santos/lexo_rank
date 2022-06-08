@@ -1,5 +1,5 @@
 import '../lexo_rank.dart';
-import 'lexoInteger.dart';
+import 'lexo_integer.dart';
 
 class LexoRankBucket {
   static final BUCKET_0 = LexoRankBucket('0');

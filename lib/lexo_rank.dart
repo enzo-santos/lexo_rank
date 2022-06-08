@@ -1,10 +1,9 @@
 library lexo_rank;
 
-import '../utils/stringBuilder.dart';
-
-import '../numeralSystems/lexoNumeralSystem36.dart';
-import 'lexoRank/lexoDecimal.dart';
-import 'lexoRank/lexoRankBucket.dart';
+import '../numeral_systems/lexoNumeralSystem36.dart';
+import '../utils/string_builder.dart';
+import 'lexo_rank/lexo_decimal.dart';
+import 'lexo_rank/lexo_rank_bucket.dart';
 
 class LexoRank {
   static final NUMERAL_SYSTEM = LexoNumeralSystem36();
@@ -160,6 +159,7 @@ class LexoRank {
   late String value;
   late LexoRankBucket bucket;
   late LexoDecimal decimal;
+
   LexoRank(LexoRankBucket bucket, LexoDecimal decimal) {
     value = bucket.format() + '|' + LexoRank.formatDecimal(decimal);
     this.bucket = bucket;

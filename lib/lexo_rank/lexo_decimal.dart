@@ -1,6 +1,6 @@
-import '../numeralSystems/lexoNumeralSystem.dart';
-import '../utils/stringBuilder.dart';
-import 'lexoInteger.dart';
+import '../numeral_systems/lexoNumeralSystem.dart';
+import '../utils/string_builder.dart';
+import 'lexo_integer.dart';
 
 class LexoDecimal {
   static LexoDecimal half(LexoNumeralSystem sys) {

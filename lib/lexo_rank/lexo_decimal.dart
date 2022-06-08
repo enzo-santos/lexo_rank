@@ -2,7 +2,7 @@ import '../numeral_systems/lexo_numeral_system.dart';
 import '../utils/string_builder.dart';
 import 'lexo_integer.dart';
 
-class LexoDecimal {
+class LexoDecimal implements Comparable<LexoDecimal> {
   factory LexoDecimal.half(LexoNumeralSystem sys) {
     final int mid = (sys.getBase() / 2).round() | 0;
     return LexoDecimal.make(LexoInteger.make(sys, 1, [mid]), 1);
@@ -48,7 +48,7 @@ class LexoDecimal {
     return mag.getSystem();
   }
 
-  LexoDecimal add(LexoDecimal other) {
+  LexoDecimal operator +(LexoDecimal other) {
     LexoInteger tmag = mag;
     int tsig = sig;
     LexoInteger omag = other.mag;
@@ -63,7 +63,7 @@ class LexoDecimal {
     return LexoDecimal.make(tmag + omag, tsig);
   }
 
-  LexoDecimal subtract(LexoDecimal other) {
+  LexoDecimal operator -(LexoDecimal other) {
     LexoInteger thisMag = mag;
     int thisSig = sig;
     LexoInteger otherMag = other.mag;
@@ -78,7 +78,7 @@ class LexoDecimal {
     return LexoDecimal.make(thisMag - otherMag, thisSig);
   }
 
-  LexoDecimal multiply(LexoDecimal other) {
+  LexoDecimal operator *(LexoDecimal other) {
     return LexoDecimal.make(mag * other.mag, sig + other.sig);
   }
 
@@ -125,6 +125,7 @@ class LexoDecimal {
     return LexoDecimal.make(nmag, nsig);
   }
 
+  @override
   int compareTo(LexoDecimal other) {
     if (identical(this, other)) {
       return 0;
@@ -167,15 +168,16 @@ class LexoDecimal {
     return sb.toString();
   }
 
-  bool equals(LexoDecimal other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    // if (!other) {
-    //   return false;
-    // }
-    return mag == other.mag && sig == other.sig;
-  }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LexoDecimal &&
+          runtimeType == other.runtimeType &&
+          mag == other.mag &&
+          sig == other.sig;
+
+  @override
+  int get hashCode => mag.hashCode ^ sig.hashCode;
 
   @override
   String toString() {

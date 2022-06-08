@@ -14,7 +14,7 @@ class LexoRank {
   static final LexoDecimal eightDecimal = LexoDecimal.parse('8', numeralSystem);
   static final LexoDecimal minDecimal = zeroDecimal;
   static final LexoDecimal maxDecimal =
-      LexoDecimal.parse('1000000', numeralSystem).subtract(oneDecimal);
+      LexoDecimal.parse('1000000', numeralSystem) - oneDecimal;
   static final LexoDecimal midDecimal =
       LexoRank.Between(minDecimal, maxDecimal);
   static final LexoDecimal initialMinDecimal =
@@ -129,8 +129,8 @@ class LexoRank {
   }
 
   static LexoDecimal mid(LexoDecimal left, LexoDecimal right) {
-    final LexoDecimal sum = left.add(right);
-    final LexoDecimal mid = sum.multiply(LexoDecimal.half(left.getSystem()));
+    final LexoDecimal sum = left + right;
+    final LexoDecimal mid = sum * LexoDecimal.half(left.getSystem());
     final int scale =
         left.getScale() > right.getScale() ? left.getScale() : right.getScale();
     if (mid.getScale() > scale) {
@@ -179,7 +179,7 @@ class LexoRank {
     }
     final LexoInteger floorInteger = decimal.floor();
     final LexoDecimal floorDecimal = LexoDecimal.from(floorInteger);
-    LexoDecimal nextDecimal = floorDecimal.subtract(LexoRank.eightDecimal);
+    LexoDecimal nextDecimal = floorDecimal - LexoRank.eightDecimal;
     if (nextDecimal.compareTo(LexoRank.minDecimal) <= 0) {
       nextDecimal = LexoRank.Between(LexoRank.minDecimal, decimal);
     }
@@ -192,7 +192,7 @@ class LexoRank {
     }
     final LexoInteger ceilInteger = decimal.ceil();
     final LexoDecimal ceilDecimal = LexoDecimal.from(ceilInteger);
-    LexoDecimal nextDecimal = ceilDecimal.add(LexoRank.eightDecimal);
+    LexoDecimal nextDecimal = ceilDecimal + LexoRank.eightDecimal;
     if (nextDecimal.compareTo(LexoRank.maxDecimal) >= 0) {
       nextDecimal = LexoRank.Between(decimal, LexoRank.maxDecimal);
     }
@@ -237,11 +237,11 @@ class LexoRank {
   }
 
   bool isMin() {
-    return decimal.equals(LexoRank.minDecimal);
+    return decimal == LexoRank.minDecimal;
   }
 
   bool isMax() {
-    return decimal.equals(LexoRank.maxDecimal);
+    return decimal == LexoRank.maxDecimal;
   }
 
   String format() {

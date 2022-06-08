@@ -7,11 +7,11 @@ class LexoRankBucket {
   static final LexoRankBucket BUCKET_2 = LexoRankBucket('2');
   static final List<LexoRankBucket> VALUES = [BUCKET_0, BUCKET_1, BUCKET_2];
 
-  static LexoRankBucket max() {
+  factory LexoRankBucket.max() {
     return LexoRankBucket.VALUES[LexoRankBucket.VALUES.length - 1];
   }
 
-  static LexoRankBucket from(String str) {
+  factory LexoRankBucket.from(String str) {
     final LexoInteger val = LexoInteger.parse(str, LexoRank.NUMERAL_SYSTEM);
     final List<LexoRankBucket> var2 = LexoRankBucket.VALUES;
     final int var3 = var2.length;
@@ -25,7 +25,7 @@ class LexoRankBucket {
     throw AssertionError('Unknown bucket: ' + str);
   }
 
-  static LexoRankBucket resolve(int bucketId) {
+  factory LexoRankBucket.resolve(int bucketId) {
     final List<LexoRankBucket> var1 = LexoRankBucket.VALUES;
     final int var2 = var1.length;
     for (int var3 = 0; var3 < var2; ++var3) {

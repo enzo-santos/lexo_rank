@@ -5,7 +5,7 @@ import '../utils/string_builder.dart';
 import 'lexo_helper.dart' as lexoHelper;
 
 class LexoInteger {
-  static LexoInteger parse(String strFull, LexoNumeralSystem system) {
+  factory LexoInteger.parse(String strFull, LexoNumeralSystem system) {
     String str = strFull;
     int sign = 1;
     if (strFull.indexOf(system.getPositiveChar()) == 0) {
@@ -23,15 +23,15 @@ class LexoInteger {
     return LexoInteger.make(system, sign, mag);
   }
 
-  static LexoInteger zero(LexoNumeralSystem sys) {
+  factory LexoInteger.zero(LexoNumeralSystem sys) {
     return LexoInteger(sys, 0, LexoInteger.ZERO_MAG);
   }
 
-  static LexoInteger one(LexoNumeralSystem sys) {
+  factory LexoInteger.one(LexoNumeralSystem sys) {
     return LexoInteger.make(sys, 1, LexoInteger.ONE_MAG);
   }
 
-  static LexoInteger make(LexoNumeralSystem sys, int sign, List<int> mag) {
+  factory LexoInteger.make(LexoNumeralSystem sys, int sign, List<int> mag) {
     int actualLength;
     for (actualLength = mag.length;
         actualLength > 0 && mag[actualLength - 1] == 0;

@@ -3,12 +3,12 @@ import '../utils/string_builder.dart';
 import 'lexo_integer.dart';
 
 class LexoDecimal {
-  static LexoDecimal half(LexoNumeralSystem sys) {
+  factory LexoDecimal.half(LexoNumeralSystem sys) {
     final int mid = (sys.getBase() / 2).round() | 0;
     return LexoDecimal.make(LexoInteger.make(sys, 1, [mid]), 1);
   }
 
-  static LexoDecimal parse(String str, LexoNumeralSystem system) {
+  factory LexoDecimal.parse(String str, LexoNumeralSystem system) {
     final int partialIndex = str.indexOf(system.getRadixPointChar());
     if (str.lastIndexOf(system.getRadixPointChar()) != partialIndex) {
       throw AssertionError('More than one ' + system.getRadixPointChar());
@@ -22,11 +22,11 @@ class LexoDecimal {
         LexoInteger.parse(intStr, system), str.length - 1 - partialIndex);
   }
 
-  static LexoDecimal from(LexoInteger integer) {
+  factory LexoDecimal.from(LexoInteger integer) {
     return LexoDecimal.make(integer, 0);
   }
 
-  static LexoDecimal make(LexoInteger integer, int sig) {
+  factory LexoDecimal.make(LexoInteger integer, int sig) {
     if (integer.isZero()) {
       return LexoDecimal(integer, 0);
     }

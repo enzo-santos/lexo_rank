@@ -26,20 +26,20 @@ class LexoRank {
           '00000',
       LexoRank.NUMERAL_SYSTEM);
 
-  static LexoRank min() {
+  factory LexoRank.min() {
     return LexoRank.from(LexoRankBucket.BUCKET_0, LexoRank.MIN_DECIMAL);
   }
 
-  static LexoRank middle() {
+  factory LexoRank.middle() {
     final LexoRank minLexoRank = LexoRank.min();
     return minLexoRank.between(LexoRank.max(minLexoRank.bucket));
   }
 
-  static LexoRank max(LexoRankBucket bucket) {
+  factory LexoRank.max(LexoRankBucket bucket) {
     return LexoRank.from(bucket, LexoRank.MAX_DECIMAL);
   }
 
-  static LexoRank initial(LexoRankBucket bucket) {
+  factory LexoRank.initial(LexoRankBucket bucket) {
     return identical(bucket, LexoRankBucket.BUCKET_0)
         ? LexoRank.from(bucket, LexoRank.INITIAL_MIN_DECIMAL)
         : LexoRank.from(bucket, LexoRank.INITIAL_MAX_DECIMAL);
@@ -94,7 +94,7 @@ class LexoRank {
     return mid;
   }
 
-  static LexoRank parse(String str) {
+  factory LexoRank.parse(String str) {
     final List<String> parts = str.split('|');
     final LexoRankBucket bucket = LexoRankBucket.from(parts[0]);
     final LexoDecimal decimal =
@@ -102,7 +102,7 @@ class LexoRank {
     return LexoRank(bucket, decimal);
   }
 
-  static LexoRank from(LexoRankBucket bucket, LexoDecimal decimal) {
+  factory LexoRank.from(LexoRankBucket bucket, LexoDecimal decimal) {
     if (decimal.getSystem().getBase() != LexoRank.NUMERAL_SYSTEM.getBase()) {
       throw AssertionError('Expected different system');
     }

@@ -39,13 +39,10 @@ class LexoDecimal {
     return LexoDecimal(newInteger, newSig);
   }
 
-  late LexoInteger mag;
-  late int sig;
+  final LexoInteger mag;
+  final int sig;
 
-  LexoDecimal(LexoInteger mag, int sig) {
-    this.mag = mag;
-    this.sig = sig;
-  }
+  const LexoDecimal(this.mag, this.sig);
 
   LexoNumeralSystem getSystem() {
     return mag.getSystem();

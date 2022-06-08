@@ -37,11 +37,10 @@ class LexoRankBucket {
     throw AssertionError('No bucket found with id ' + bucketId.toString());
   }
 
-  late LexoInteger value;
+  final LexoInteger value;
 
-  LexoRankBucket(String val) {
-    value = LexoInteger.parse(val, LexoRank.NUMERAL_SYSTEM);
-  }
+  LexoRankBucket(String val)
+      : value = LexoInteger.parse(val, LexoRank.NUMERAL_SYSTEM);
 
   String format() {
     return value.format();

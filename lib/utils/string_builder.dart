@@ -1,9 +1,7 @@
 class StringBuilder {
   String str = '';
 
-  StringBuilder(String str) {
-    this.str = str;
-  }
+  StringBuilder(this.str);
 
   int get length {
     return str.length;

@@ -102,7 +102,10 @@ class LexoInteger {
   }
 
   static List<int> Complement(
-      LexoNumeralSystem sys, List<int> mag, int digits) {
+    LexoNumeralSystem sys,
+    List<int> mag,
+    int digits,
+  ) {
     if (digits <= 0) {
       throw AssertionError('Expected at least 1 digit');
     }
@@ -131,15 +134,12 @@ class LexoInteger {
     return 0;
   }
 
-  late LexoNumeralSystem sys;
-  late int sign;
-  late List<int> mag;
+  final LexoNumeralSystem sys;
+  final int sign;
+  final List<int> mag;
 
-  LexoInteger(LexoNumeralSystem system, int sign, List<int> mag) {
-    sys = system;
-    this.sign = sign;
-    this.mag = mag;
-  }
+  const LexoInteger(LexoNumeralSystem system, this.sign, this.mag)
+      : sys = system;
 
   LexoInteger add(LexoInteger other) {
     checkSystem(other);

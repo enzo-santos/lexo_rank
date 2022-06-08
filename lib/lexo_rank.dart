@@ -168,15 +168,12 @@ class LexoRank {
     return val.toString();
   }
 
-  late String value;
-  late LexoRankBucket bucket;
-  late LexoDecimal decimal;
+  final String value;
+  final LexoRankBucket bucket;
+  final LexoDecimal decimal;
 
-  LexoRank(LexoRankBucket bucket, LexoDecimal decimal) {
-    value = bucket.format() + '|' + LexoRank.formatDecimal(decimal);
-    this.bucket = bucket;
-    this.decimal = decimal;
-  }
+  LexoRank(this.bucket, this.decimal)
+      : value = bucket.format() + '|' + LexoRank.formatDecimal(decimal);
 
   LexoRank genPrev() {
     if (isMax()) {

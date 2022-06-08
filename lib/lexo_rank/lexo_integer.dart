@@ -2,7 +2,7 @@ import 'dart:math';
 
 import '../numeral_systems/lexo_numeral_system.dart';
 import '../utils/string_builder.dart';
-import 'lexo_helper.dart' as lexoHelper;
+import 'lexo_helper.dart' as lexo_helper;
 
 class LexoInteger {
   factory LexoInteger.parse(String strFull, LexoNumeralSystem system) {
@@ -24,11 +24,11 @@ class LexoInteger {
   }
 
   factory LexoInteger.zero(LexoNumeralSystem sys) {
-    return LexoInteger(sys, 0, LexoInteger.ZERO_MAG);
+    return LexoInteger(sys, 0, LexoInteger.zeroMag);
   }
 
   factory LexoInteger.one(LexoNumeralSystem sys) {
-    return LexoInteger.make(sys, 1, LexoInteger.ONE_MAG);
+    return LexoInteger.make(sys, 1, LexoInteger.oneMag);
   }
 
   factory LexoInteger.make(LexoNumeralSystem sys, int sign, List<int> mag) {
@@ -43,15 +43,15 @@ class LexoInteger {
       return LexoInteger(sys, sign, mag);
     }
     final List<int> nmag = List.filled(actualLength, 0);
-    lexoHelper.arrayCopy(mag, 0, nmag, 0, actualLength);
+    lexo_helper.arrayCopy(mag, 0, nmag, 0, actualLength);
     return LexoInteger(sys, sign, nmag);
   }
 
-  static const List<int> ZERO_MAG = [0];
-  static const List<int> ONE_MAG = [1];
-  static const int NEGATIVE_SIGN = -1;
-  static const int ZERO_SIGN = 0;
-  static const int POSITIVE_SIGN = 1;
+  static const List<int> zeroMag = [0];
+  static const List<int> oneMag = [1];
+  static const int negativeSign = -1;
+  static const int zeroSign = 0;
+  static const int positiveSign = 1;
 
   static List<int> Add(LexoNumeralSystem sys, List<int> l, List<int> r) {
     final int estimatedSize = max(l.length, r.length);
@@ -72,7 +72,7 @@ class LexoInteger {
   static List<int> extendWithCarry(List<int> mag, int carry) {
     if (carry > 0) {
       final List<int> extendedMag = List.filled(mag.length + 1, 0);
-      lexoHelper.arrayCopy(mag, 0, extendedMag, 0, mag.length);
+      lexo_helper.arrayCopy(mag, 0, extendedMag, 0, mag.length);
       extendedMag[extendedMag.length - 1] = carry;
       return extendedMag;
     }
@@ -83,7 +83,7 @@ class LexoInteger {
     final List<int> rComplement = LexoInteger.Complement(sys, r, l.length);
     final List<int> rSum = LexoInteger.Add(sys, l, rComplement);
     rSum[rSum.length - 1] = 0;
-    return LexoInteger.Add(sys, rSum, LexoInteger.ONE_MAG);
+    return LexoInteger.Add(sys, rSum, LexoInteger.oneMag);
   }
 
   static List<int> Multiply(LexoNumeralSystem sys, List<int> l, List<int> r) {
@@ -228,7 +228,7 @@ class LexoInteger {
       return shiftRight(times.abs());
     }
     final List<int> nmag = List.filled(mag.length + times, 0);
-    lexoHelper.arrayCopy(mag, 0, nmag, times, mag.length);
+    lexo_helper.arrayCopy(mag, 0, nmag, times, mag.length);
     return LexoInteger.make(sys, sign, nmag);
   }
 
@@ -237,7 +237,7 @@ class LexoInteger {
       return LexoInteger.zero(sys);
     }
     final List<int> nmag = List.filled(mag.length - times, 0);
-    lexoHelper.arrayCopy(mag, times, nmag, 0, nmag.length);
+    lexo_helper.arrayCopy(mag, times, nmag, 0, nmag.length);
     return LexoInteger.make(sys, sign, nmag);
   }
 

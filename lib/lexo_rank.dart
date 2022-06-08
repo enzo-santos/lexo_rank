@@ -8,26 +8,24 @@ import 'lexo_rank/lexo_decimal.dart';
 import 'lexo_rank/lexo_rank_bucket.dart';
 
 class LexoRank {
-  static final LexoNumeralSystem36 NUMERAL_SYSTEM = LexoNumeralSystem36();
-  static final LexoDecimal ZERO_DECIMAL =
-      LexoDecimal.parse('0', NUMERAL_SYSTEM);
-  static final LexoDecimal ONE_DECIMAL = LexoDecimal.parse('1', NUMERAL_SYSTEM);
-  static final LexoDecimal EIGHT_DECIMAL =
-      LexoDecimal.parse('8', NUMERAL_SYSTEM);
-  static final LexoDecimal MIN_DECIMAL = ZERO_DECIMAL;
-  static final LexoDecimal MAX_DECIMAL =
-      LexoDecimal.parse('1000000', NUMERAL_SYSTEM).subtract(ONE_DECIMAL);
-  static final LexoDecimal MID_DECIMAL =
-      LexoRank.Between(MIN_DECIMAL, MAX_DECIMAL);
-  static final LexoDecimal INITIAL_MIN_DECIMAL =
-      LexoDecimal.parse('100000', LexoRank.NUMERAL_SYSTEM);
-  static final LexoDecimal INITIAL_MAX_DECIMAL = LexoDecimal.parse(
-      LexoRank.NUMERAL_SYSTEM.toChar(LexoRank.NUMERAL_SYSTEM.getBase() - 2) +
+  static final LexoNumeralSystem36 numeralSystem = LexoNumeralSystem36();
+  static final LexoDecimal zeroDecimal = LexoDecimal.parse('0', numeralSystem);
+  static final LexoDecimal oneDecimal = LexoDecimal.parse('1', numeralSystem);
+  static final LexoDecimal eightDecimal = LexoDecimal.parse('8', numeralSystem);
+  static final LexoDecimal minDecimal = zeroDecimal;
+  static final LexoDecimal maxDecimal =
+      LexoDecimal.parse('1000000', numeralSystem).subtract(oneDecimal);
+  static final LexoDecimal midDecimal =
+      LexoRank.Between(minDecimal, maxDecimal);
+  static final LexoDecimal initialMinDecimal =
+      LexoDecimal.parse('100000', LexoRank.numeralSystem);
+  static final LexoDecimal initialMaxDecimal = LexoDecimal.parse(
+      LexoRank.numeralSystem.toChar(LexoRank.numeralSystem.getBase() - 2) +
           '00000',
-      LexoRank.NUMERAL_SYSTEM);
+      LexoRank.numeralSystem);
 
   factory LexoRank.min() {
-    return LexoRank.from(LexoRankBucket.BUCKET_0, LexoRank.MIN_DECIMAL);
+    return LexoRank.from(LexoRankBucket.bucket0, LexoRank.minDecimal);
   }
 
   factory LexoRank.middle() {
@@ -36,13 +34,13 @@ class LexoRank {
   }
 
   factory LexoRank.max(LexoRankBucket bucket) {
-    return LexoRank.from(bucket, LexoRank.MAX_DECIMAL);
+    return LexoRank.from(bucket, LexoRank.maxDecimal);
   }
 
   factory LexoRank.initial(LexoRankBucket bucket) {
-    return identical(bucket, LexoRankBucket.BUCKET_0)
-        ? LexoRank.from(bucket, LexoRank.INITIAL_MIN_DECIMAL)
-        : LexoRank.from(bucket, LexoRank.INITIAL_MAX_DECIMAL);
+    return identical(bucket, LexoRankBucket.bucket0)
+        ? LexoRank.from(bucket, LexoRank.initialMinDecimal)
+        : LexoRank.from(bucket, LexoRank.initialMaxDecimal);
   }
 
   static LexoDecimal Between(LexoDecimal oLeft, LexoDecimal oRight) {
@@ -98,12 +96,12 @@ class LexoRank {
     final List<String> parts = str.split('|');
     final LexoRankBucket bucket = LexoRankBucket.from(parts[0]);
     final LexoDecimal decimal =
-        LexoDecimal.parse(parts[1], LexoRank.NUMERAL_SYSTEM);
+        LexoDecimal.parse(parts[1], LexoRank.numeralSystem);
     return LexoRank(bucket, decimal);
   }
 
   factory LexoRank.from(LexoRankBucket bucket, LexoDecimal decimal) {
-    if (decimal.getSystem().getBase() != LexoRank.NUMERAL_SYSTEM.getBase()) {
+    if (decimal.getSystem().getBase() != LexoRank.numeralSystem.getBase()) {
       throw AssertionError('Expected different system');
     }
     return LexoRank(bucket, decimal);
@@ -152,11 +150,11 @@ class LexoRank {
     final String formatVal = decimal.format();
     final StringBuilder val = StringBuilder(formatVal);
     int partialIndex =
-        formatVal.indexOf(LexoRank.NUMERAL_SYSTEM.getRadixPointChar());
-    final String zero = LexoRank.NUMERAL_SYSTEM.toChar(0);
+        formatVal.indexOf(LexoRank.numeralSystem.getRadixPointChar());
+    final String zero = LexoRank.numeralSystem.toChar(0);
     if (partialIndex < 0) {
       partialIndex = formatVal.length;
-      val.append(LexoRank.NUMERAL_SYSTEM.getRadixPointChar());
+      val.append(LexoRank.numeralSystem.getRadixPointChar());
     }
     while (partialIndex < 6) {
       val.insert(0, zero);
@@ -177,26 +175,26 @@ class LexoRank {
 
   LexoRank genPrev() {
     if (isMax()) {
-      return LexoRank(bucket, LexoRank.INITIAL_MAX_DECIMAL);
+      return LexoRank(bucket, LexoRank.initialMaxDecimal);
     }
     final LexoInteger floorInteger = decimal.floor();
     final LexoDecimal floorDecimal = LexoDecimal.from(floorInteger);
-    LexoDecimal nextDecimal = floorDecimal.subtract(LexoRank.EIGHT_DECIMAL);
-    if (nextDecimal.compareTo(LexoRank.MIN_DECIMAL) <= 0) {
-      nextDecimal = LexoRank.Between(LexoRank.MIN_DECIMAL, decimal);
+    LexoDecimal nextDecimal = floorDecimal.subtract(LexoRank.eightDecimal);
+    if (nextDecimal.compareTo(LexoRank.minDecimal) <= 0) {
+      nextDecimal = LexoRank.Between(LexoRank.minDecimal, decimal);
     }
     return LexoRank(bucket, nextDecimal);
   }
 
   LexoRank genNext() {
     if (isMin()) {
-      return LexoRank(bucket, LexoRank.INITIAL_MIN_DECIMAL);
+      return LexoRank(bucket, LexoRank.initialMinDecimal);
     }
     final LexoInteger ceilInteger = decimal.ceil();
     final LexoDecimal ceilDecimal = LexoDecimal.from(ceilInteger);
-    LexoDecimal nextDecimal = ceilDecimal.add(LexoRank.EIGHT_DECIMAL);
-    if (nextDecimal.compareTo(LexoRank.MAX_DECIMAL) >= 0) {
-      nextDecimal = LexoRank.Between(decimal, LexoRank.MAX_DECIMAL);
+    LexoDecimal nextDecimal = ceilDecimal.add(LexoRank.eightDecimal);
+    if (nextDecimal.compareTo(LexoRank.maxDecimal) >= 0) {
+      nextDecimal = LexoRank.Between(decimal, LexoRank.maxDecimal);
     }
     return LexoRank(bucket, nextDecimal);
   }
@@ -239,11 +237,11 @@ class LexoRank {
   }
 
   bool isMin() {
-    return decimal.equals(LexoRank.MIN_DECIMAL);
+    return decimal.equals(LexoRank.minDecimal);
   }
 
   bool isMax() {
-    return decimal.equals(LexoRank.MAX_DECIMAL);
+    return decimal.equals(LexoRank.maxDecimal);
   }
 
   String format() {

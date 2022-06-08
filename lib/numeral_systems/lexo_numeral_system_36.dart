@@ -1,7 +1,7 @@
 import 'lexo_numeral_system.dart';
 
 class LexoNumeralSystem36 implements LexoNumeralSystem {
-  static const List<String> DIGITS = [
+  static const List<String> digits = [
     '0',
     '1',
     '2',
@@ -75,6 +75,6 @@ class LexoNumeralSystem36 implements LexoNumeralSystem {
 
   @override
   String toChar(int digit) {
-    return DIGITS[digit];
+    return digits[digit];
   }
 }

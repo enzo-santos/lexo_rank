@@ -2,18 +2,18 @@ import '../lexo_rank.dart';
 import 'lexo_integer.dart';
 
 class LexoRankBucket {
-  static final LexoRankBucket BUCKET_0 = LexoRankBucket('0');
-  static final LexoRankBucket BUCKET_1 = LexoRankBucket('1');
-  static final LexoRankBucket BUCKET_2 = LexoRankBucket('2');
-  static final List<LexoRankBucket> VALUES = [BUCKET_0, BUCKET_1, BUCKET_2];
+  static final LexoRankBucket bucket0 = LexoRankBucket('0');
+  static final LexoRankBucket bucket1 = LexoRankBucket('1');
+  static final LexoRankBucket bucket2 = LexoRankBucket('2');
+  static final List<LexoRankBucket> values = [bucket0, bucket1, bucket2];
 
   factory LexoRankBucket.max() {
-    return LexoRankBucket.VALUES[LexoRankBucket.VALUES.length - 1];
+    return LexoRankBucket.values[LexoRankBucket.values.length - 1];
   }
 
   factory LexoRankBucket.from(String str) {
-    final LexoInteger val = LexoInteger.parse(str, LexoRank.NUMERAL_SYSTEM);
-    final List<LexoRankBucket> var2 = LexoRankBucket.VALUES;
+    final LexoInteger val = LexoInteger.parse(str, LexoRank.numeralSystem);
+    final List<LexoRankBucket> var2 = LexoRankBucket.values;
     final int var3 = var2.length;
     for (int var4 = 0; var4 < var3; ++var4) {
       final LexoRankBucket bucket = var2[var4];
@@ -26,7 +26,7 @@ class LexoRankBucket {
   }
 
   factory LexoRankBucket.resolve(int bucketId) {
-    final List<LexoRankBucket> var1 = LexoRankBucket.VALUES;
+    final List<LexoRankBucket> var1 = LexoRankBucket.values;
     final int var2 = var1.length;
     for (int var3 = 0; var3 < var2; ++var3) {
       final LexoRankBucket bucket = var1[var3];
@@ -40,34 +40,34 @@ class LexoRankBucket {
   final LexoInteger value;
 
   LexoRankBucket(String val)
-      : value = LexoInteger.parse(val, LexoRank.NUMERAL_SYSTEM);
+      : value = LexoInteger.parse(val, LexoRank.numeralSystem);
 
   String format() {
     return value.format();
   }
 
   LexoRankBucket next() {
-    if (equals(LexoRankBucket.BUCKET_0)) {
-      return LexoRankBucket.BUCKET_1;
+    if (equals(LexoRankBucket.bucket0)) {
+      return LexoRankBucket.bucket1;
     }
-    if (equals(LexoRankBucket.BUCKET_1)) {
-      return LexoRankBucket.BUCKET_2;
+    if (equals(LexoRankBucket.bucket1)) {
+      return LexoRankBucket.bucket2;
     }
-    return equals(LexoRankBucket.BUCKET_2)
-        ? LexoRankBucket.BUCKET_0
-        : LexoRankBucket.BUCKET_2;
+    return equals(LexoRankBucket.bucket2)
+        ? LexoRankBucket.bucket0
+        : LexoRankBucket.bucket2;
   }
 
   LexoRankBucket prev() {
-    if (equals(LexoRankBucket.BUCKET_0)) {
-      return LexoRankBucket.BUCKET_2;
+    if (equals(LexoRankBucket.bucket0)) {
+      return LexoRankBucket.bucket2;
     }
-    if (equals(LexoRankBucket.BUCKET_1)) {
-      return LexoRankBucket.BUCKET_0;
+    if (equals(LexoRankBucket.bucket1)) {
+      return LexoRankBucket.bucket0;
     }
-    return equals(LexoRankBucket.BUCKET_2)
-        ? LexoRankBucket.BUCKET_1
-        : LexoRankBucket.BUCKET_0;
+    return equals(LexoRankBucket.bucket2)
+        ? LexoRankBucket.bucket1
+        : LexoRankBucket.bucket0;
   }
 
   bool equals(LexoRankBucket other) {

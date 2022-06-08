@@ -1,11 +1,11 @@
 abstract class LexoNumeralSystem {
-  int getBase();
+  int get base;
 
-  String getPositiveChar();
+  String get positiveChar;
 
-  String getNegativeChar();
+  String get negativeChar;
 
-  String getRadixPointChar();
+  String get radixPointChar;
 
   int toDigit(String var1);
 

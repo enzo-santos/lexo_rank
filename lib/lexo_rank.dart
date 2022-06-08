@@ -20,8 +20,7 @@ class LexoRank {
   static final LexoDecimal initialMinDecimal =
       LexoDecimal.parse('100000', LexoRank.numeralSystem);
   static final LexoDecimal initialMaxDecimal = LexoDecimal.parse(
-      LexoRank.numeralSystem.toChar(LexoRank.numeralSystem.getBase() - 2) +
-          '00000',
+      LexoRank.numeralSystem.toChar(LexoRank.numeralSystem.base - 2) + '00000',
       LexoRank.numeralSystem);
 
   factory LexoRank.min() {
@@ -44,28 +43,28 @@ class LexoRank {
   }
 
   static LexoDecimal Between(LexoDecimal oLeft, LexoDecimal oRight) {
-    if (oLeft.getSystem().getBase() != oRight.getSystem().getBase()) {
+    if (oLeft.system.base != oRight.system.base) {
       throw AssertionError('Expected same system');
     }
     LexoDecimal left = oLeft;
     LexoDecimal right = oRight;
     LexoDecimal nLeft;
-    if (oLeft.getScale() < oRight.getScale()) {
-      nLeft = oRight.setScale(oLeft.getScale(), false);
+    if (oLeft.scale < oRight.scale) {
+      nLeft = oRight.setScale(oLeft.scale, false);
       if (oLeft.compareTo(nLeft) >= 0) {
         return LexoRank.mid(oLeft, oRight);
       }
       right = nLeft;
     }
-    if (oLeft.getScale() > right.getScale()) {
-      nLeft = oLeft.setScale(right.getScale(), true);
+    if (oLeft.scale > right.scale) {
+      nLeft = oLeft.setScale(right.scale, true);
       if (nLeft.compareTo(right) >= 0) {
         return LexoRank.mid(oLeft, oRight);
       }
       left = nLeft;
     }
     LexoDecimal nRight;
-    for (int scale = left.getScale(); scale > 0; right = nRight) {
+    for (int scale = left.scale; scale > 0; right = nRight) {
       final int nScale1 = scale - 1;
       final LexoDecimal nLeft1 = left.setScale(nScale1, true);
       nRight = right.setScale(nScale1, false);
@@ -81,7 +80,7 @@ class LexoRank {
     }
     LexoDecimal mid = LexoRank.middleInternal(oLeft, oRight, left, right);
     int nScale;
-    for (int mScale = mid.getScale(); mScale > 0; mScale = nScale) {
+    for (int mScale = mid.scale; mScale > 0; mScale = nScale) {
       nScale = mScale - 1;
       final LexoDecimal nMid = mid.setScale(nScale);
       if (oLeft.compareTo(nMid) >= 0 || nMid.compareTo(oRight) >= 0) {
@@ -101,7 +100,7 @@ class LexoRank {
   }
 
   factory LexoRank.from(LexoRankBucket bucket, LexoDecimal decimal) {
-    if (decimal.getSystem().getBase() != LexoRank.numeralSystem.getBase()) {
+    if (decimal.system.base != LexoRank.numeralSystem.base) {
       throw AssertionError('Expected different system');
     }
     return LexoRank(bucket, decimal);
@@ -130,10 +129,9 @@ class LexoRank {
 
   static LexoDecimal mid(LexoDecimal left, LexoDecimal right) {
     final LexoDecimal sum = left + right;
-    final LexoDecimal mid = sum * LexoDecimal.half(left.getSystem());
-    final int scale =
-        left.getScale() > right.getScale() ? left.getScale() : right.getScale();
-    if (mid.getScale() > scale) {
+    final LexoDecimal mid = sum * LexoDecimal.half(left.system);
+    final int scale = left.scale > right.scale ? left.scale : right.scale;
+    if (mid.scale > scale) {
       final LexoDecimal roundDown = mid.setScale(scale, false);
       if (roundDown.compareTo(left) > 0) {
         return roundDown;
@@ -149,12 +147,11 @@ class LexoRank {
   static String formatDecimal(LexoDecimal decimal) {
     final String formatVal = decimal.format();
     final StringBuilder val = StringBuilder(formatVal);
-    int partialIndex =
-        formatVal.indexOf(LexoRank.numeralSystem.getRadixPointChar());
+    int partialIndex = formatVal.indexOf(LexoRank.numeralSystem.radixPointChar);
     final String zero = LexoRank.numeralSystem.toChar(0);
     if (partialIndex < 0) {
       partialIndex = formatVal.length;
-      val.append(LexoRank.numeralSystem.getRadixPointChar());
+      val.append(LexoRank.numeralSystem.radixPointChar);
     }
     while (partialIndex < 6) {
       val.insert(0, zero);
@@ -218,14 +215,6 @@ class LexoRank {
           other.decimal.toString());
     }
     return LexoRank(bucket, LexoRank.Between(decimal, other.decimal));
-  }
-
-  LexoRankBucket getBucket() {
-    return bucket;
-  }
-
-  LexoDecimal getDecimal() {
-    return decimal;
   }
 
   LexoRank inNextBucket() {

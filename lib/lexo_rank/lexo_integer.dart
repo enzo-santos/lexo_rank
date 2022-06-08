@@ -8,9 +8,9 @@ class LexoInteger implements Comparable<LexoInteger> {
   factory LexoInteger.parse(String strFull, LexoNumeralSystem system) {
     String str = strFull;
     int sign = 1;
-    if (strFull.indexOf(system.getPositiveChar()) == 0) {
+    if (strFull.indexOf(system.positiveChar) == 0) {
       str = strFull.substring(1);
-    } else if (strFull.indexOf(system.getNegativeChar()) == 0) {
+    } else if (strFull.indexOf(system.negativeChar) == 0) {
       str = strFull.substring(1);
       sign = -1;
     }
@@ -61,7 +61,7 @@ class LexoInteger implements Comparable<LexoInteger> {
       final int lnum = i < l.length ? l[i] : 0;
       final int rnum = i < r.length ? r[i] : 0;
       int sum = lnum + rnum + carry;
-      for (carry = 0; sum >= sys.getBase(); sum -= sys.getBase()) {
+      for (carry = 0; sum >= sys.base; sum -= sys.base) {
         ++carry;
       }
       result[i] = sum;
@@ -92,8 +92,8 @@ class LexoInteger implements Comparable<LexoInteger> {
       for (int ri = 0; ri < r.length; ++ri) {
         final int resultIndex = li + ri;
         for (result[resultIndex] += l[li] * r[ri];
-            result[resultIndex] >= sys.getBase();
-            result[resultIndex] -= sys.getBase()) {
+            result[resultIndex] >= sys.base;
+            result[resultIndex] -= sys.base) {
           ++result[resultIndex + 1];
         }
       }
@@ -109,9 +109,9 @@ class LexoInteger implements Comparable<LexoInteger> {
     if (digits <= 0) {
       throw AssertionError('Expected at least 1 digit');
     }
-    final List<int> nmag = List.filled(digits, sys.getBase() - 1);
+    final List<int> nmag = List.filled(digits, sys.base - 1);
     for (int i = 0; i < mag.length; ++i) {
-      nmag[i] = sys.getBase() - 1 - mag[i];
+      nmag[i] = sys.base - 1 - mag[i];
     }
     return nmag;
   }
@@ -134,19 +134,19 @@ class LexoInteger implements Comparable<LexoInteger> {
     return 0;
   }
 
-  final LexoNumeralSystem sys;
+  final LexoNumeralSystem system;
   final int sign;
   final List<int> mag;
 
   const LexoInteger(LexoNumeralSystem system, this.sign, this.mag)
-      : sys = system;
+      : system = system;
 
   LexoInteger operator +(LexoInteger other) {
     checkSystem(other);
-    if (isZero()) {
+    if (isZero) {
       return other;
     }
-    if (other.isZero()) {
+    if (other.isZero) {
       return this;
     }
     if (sign != other.sign) {
@@ -159,16 +159,16 @@ class LexoInteger implements Comparable<LexoInteger> {
       pos = -other;
       return this - pos;
     }
-    final List<int> result = LexoInteger.Add(sys, mag, other.mag);
-    return LexoInteger.make(sys, sign, result);
+    final List<int> result = LexoInteger.Add(system, mag, other.mag);
+    return LexoInteger.make(system, sign, result);
   }
 
   LexoInteger operator -(LexoInteger other) {
     checkSystem(other);
-    if (isZero()) {
+    if (isZero) {
       return -other;
     }
-    if (other.isZero()) {
+    if (other.isZero) {
       return this;
     }
     if (sign != other.sign) {
@@ -183,41 +183,41 @@ class LexoInteger implements Comparable<LexoInteger> {
     }
     final int cmp = LexoInteger.compare(mag, other.mag);
     if (cmp == 0) {
-      return LexoInteger.zero(sys);
+      return LexoInteger.zero(system);
     }
     return cmp < 0
         ? LexoInteger.make(
-            sys, sign == -1 ? 1 : -1, LexoInteger.Subtract(sys, other.mag, mag))
-        : LexoInteger.make(sys, sign == -1 ? -1 : 1,
-            LexoInteger.Subtract(sys, mag, other.mag));
+            system, sign == -1 ? 1 : -1, LexoInteger.Subtract(system, other.mag, mag))
+        : LexoInteger.make(system, sign == -1 ? -1 : 1,
+            LexoInteger.Subtract(system, mag, other.mag));
   }
 
   LexoInteger operator *(LexoInteger other) {
     checkSystem(other);
-    if (isZero()) {
+    if (isZero) {
       return this;
     }
-    if (other.isZero()) {
+    if (other.isZero) {
       return other;
     }
-    if (isOneish()) {
+    if (isOneish) {
       return sign == other.sign
-          ? LexoInteger.make(sys, 1, other.mag)
-          : LexoInteger.make(sys, -1, other.mag);
+          ? LexoInteger.make(system, 1, other.mag)
+          : LexoInteger.make(system, -1, other.mag);
     }
-    if (other.isOneish()) {
+    if (other.isOneish) {
       return sign == other.sign
-          ? LexoInteger.make(sys, 1, mag)
-          : LexoInteger.make(sys, -1, mag);
+          ? LexoInteger.make(system, 1, mag)
+          : LexoInteger.make(system, -1, mag);
     }
-    final List<int> newMag = LexoInteger.Multiply(sys, mag, other.mag);
+    final List<int> newMag = LexoInteger.Multiply(system, mag, other.mag);
     return sign == other.sign
-        ? LexoInteger.make(sys, 1, newMag)
-        : LexoInteger.make(sys, -1, newMag);
+        ? LexoInteger.make(system, 1, newMag)
+        : LexoInteger.make(system, -1, newMag);
   }
 
   LexoInteger operator -() {
-    return isZero() ? this : LexoInteger.make(sys, sign == 1 ? -1 : 1, mag);
+    return isZero ? this : LexoInteger.make(system, sign == 1 ? -1 : 1, mag);
   }
 
   LexoInteger operator <<(int times) {
@@ -229,16 +229,16 @@ class LexoInteger implements Comparable<LexoInteger> {
     }
     final List<int> nmag = List.filled(mag.length + times, 0);
     lexo_helper.arrayCopy(mag, 0, nmag, times, mag.length);
-    return LexoInteger.make(sys, sign, nmag);
+    return LexoInteger.make(system, sign, nmag);
   }
 
   LexoInteger operator >>(int times) {
     if (mag.length - times <= 0) {
-      return LexoInteger.zero(sys);
+      return LexoInteger.zero(system);
     }
     final List<int> nmag = List.filled(mag.length - times, 0);
     lexo_helper.arrayCopy(mag, times, nmag, 0, nmag.length);
-    return LexoInteger.make(sys, sign, nmag);
+    return LexoInteger.make(system, sign, nmag);
   }
 
   LexoInteger operator ~() {
@@ -247,18 +247,22 @@ class LexoInteger implements Comparable<LexoInteger> {
 
   LexoInteger complementDigits(int digits) {
     return LexoInteger.make(
-      sys,
+      system,
       sign,
-      LexoInteger.Complement(sys, mag, digits),
+      LexoInteger.Complement(system, mag, digits),
     );
   }
 
-  bool isZero() {
+  bool get isZero {
     return sign == 0 && mag.length == 1 && mag[0] == 0;
   }
 
-  bool isOne() {
+  bool get isOne {
     return sign == 1 && mag.length == 1 && mag[0] == 1;
+  }
+
+  bool get isOneish {
+    return mag.length == 1 && mag[0] == 1;
   }
 
   int getMag(int index) {
@@ -292,23 +296,19 @@ class LexoInteger implements Comparable<LexoInteger> {
     return other.sign == 1 ? -1 : 0;
   }
 
-  LexoNumeralSystem getSystem() {
-    return sys;
-  }
-
   String format() {
-    if (isZero()) {
-      return '' + sys.toChar(0);
+    if (isZero) {
+      return '' + system.toChar(0);
     }
     final StringBuilder sb = StringBuilder('');
     final List<int> var2 = mag;
     final int var3 = var2.length;
     for (int var4 = 0; var4 < var3; ++var4) {
       final int digit = var2[var4];
-      sb.insert(0, sys.toChar(digit));
+      sb.insert(0, system.toChar(digit));
     }
     if (sign == -1) {
-      sb.insert(0, sys.getNegativeChar());
+      sb.insert(0, system.negativeChar);
     }
     return sb.toString();
   }
@@ -318,23 +318,19 @@ class LexoInteger implements Comparable<LexoInteger> {
       identical(this, other) ||
       other is LexoInteger &&
           runtimeType == other.runtimeType &&
-          sys.getBase() == other.sys.getBase() &&
+          system.base == other.system.base &&
           compareTo(other) == 0;
 
   @override
-  int get hashCode => sys.getBase().hashCode ^ sign.hashCode;
+  int get hashCode => system.base.hashCode ^ sign.hashCode;
 
   @override
   String toString() {
     return format();
   }
 
-  bool isOneish() {
-    return mag.length == 1 && mag[0] == 1;
-  }
-
   void checkSystem(LexoInteger other) {
-    if (sys.getBase() != other.sys.getBase()) {
+    if (system.base != other.system.base) {
       throw AssertionError('Expected numbers of same numeral sys');
     }
   }

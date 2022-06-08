@@ -4,14 +4,14 @@ import 'lexo_integer.dart';
 
 class LexoDecimal implements Comparable<LexoDecimal> {
   factory LexoDecimal.half(LexoNumeralSystem sys) {
-    final int mid = (sys.getBase() / 2).round() | 0;
+    final int mid = (sys.base / 2).round() | 0;
     return LexoDecimal.make(LexoInteger.make(sys, 1, [mid]), 1);
   }
 
   factory LexoDecimal.parse(String str, LexoNumeralSystem system) {
-    final int partialIndex = str.indexOf(system.getRadixPointChar());
-    if (str.lastIndexOf(system.getRadixPointChar()) != partialIndex) {
-      throw AssertionError('More than one ' + system.getRadixPointChar());
+    final int partialIndex = str.indexOf(system.radixPointChar);
+    if (str.lastIndexOf(system.radixPointChar) != partialIndex) {
+      throw AssertionError('More than one ' + system.radixPointChar);
     }
     if (partialIndex < 0) {
       return LexoDecimal.make(LexoInteger.parse(str, system), 0);
@@ -27,7 +27,7 @@ class LexoDecimal implements Comparable<LexoDecimal> {
   }
 
   factory LexoDecimal.make(LexoInteger integer, int sig) {
-    if (integer.isZero()) {
+    if (integer.isZero) {
       return LexoDecimal(integer, 0);
     }
     int zeroCount = 0;
@@ -40,20 +40,20 @@ class LexoDecimal implements Comparable<LexoDecimal> {
   }
 
   final LexoInteger mag;
-  final int sig;
+  final int scale;
 
-  const LexoDecimal(this.mag, this.sig);
+  const LexoDecimal(this.mag, this.scale);
 
-  LexoNumeralSystem getSystem() {
-    return mag.getSystem();
+  LexoNumeralSystem get system {
+    return mag.system;
   }
 
   LexoDecimal operator +(LexoDecimal other) {
     LexoInteger tmag = mag;
-    int tsig = sig;
+    int tsig = scale;
     LexoInteger omag = other.mag;
     int osig;
-    for (osig = other.sig; tsig < osig; ++tsig) {
+    for (osig = other.scale; tsig < osig; ++tsig) {
       tmag <<= 1;
     }
     while (tsig > osig) {
@@ -65,10 +65,10 @@ class LexoDecimal implements Comparable<LexoDecimal> {
 
   LexoDecimal operator -(LexoDecimal other) {
     LexoInteger thisMag = mag;
-    int thisSig = sig;
+    int thisSig = scale;
     LexoInteger otherMag = other.mag;
     int otherSig;
-    for (otherSig = other.sig; thisSig < otherSig; ++thisSig) {
+    for (otherSig = other.scale; thisSig < otherSig; ++thisSig) {
       thisMag <<= 1;
     }
     while (thisSig > otherSig) {
@@ -79,26 +79,26 @@ class LexoDecimal implements Comparable<LexoDecimal> {
   }
 
   LexoDecimal operator *(LexoDecimal other) {
-    return LexoDecimal.make(mag * other.mag, sig + other.sig);
+    return LexoDecimal.make(mag * other.mag, scale + other.scale);
   }
 
   LexoInteger floor() {
-    return mag >> sig;
+    return mag >> scale;
   }
 
   LexoInteger ceil() {
-    if (isExact()) {
+    if (isExact) {
       return mag;
     }
     final LexoInteger f = floor();
-    return f + LexoInteger.one(f.getSystem());
+    return f + LexoInteger.one(f.system);
   }
 
-  bool isExact() {
-    if (sig == 0) {
+  bool get isExact {
+    if (scale == 0) {
       return true;
     }
-    for (int i = 0; i < sig; ++i) {
+    for (int i = 0; i < scale; ++i) {
       if (mag.getMag(i) != 0) {
         return false;
       }
@@ -106,21 +106,17 @@ class LexoDecimal implements Comparable<LexoDecimal> {
     return true;
   }
 
-  int getScale() {
-    return sig;
-  }
-
   LexoDecimal setScale(int nsig, [bool ceiling = false]) {
-    if (nsig >= sig) {
+    if (nsig >= scale) {
       return this;
     }
     if (nsig < 0) {
       nsig = 0;
     }
-    final int diff = sig - nsig;
+    final int diff = scale - nsig;
     LexoInteger nmag = mag >> diff;
     if (ceiling) {
-      nmag += LexoInteger.one(nmag.getSystem());
+      nmag += LexoInteger.one(nmag.system);
     }
     return LexoDecimal.make(nmag, nsig);
   }
@@ -135,32 +131,32 @@ class LexoDecimal implements Comparable<LexoDecimal> {
     // }
     LexoInteger tMag = mag;
     LexoInteger oMag = other.mag;
-    if (sig > other.sig) {
-      oMag = oMag << (sig - other.sig);
-    } else if (sig < other.sig) {
-      tMag = tMag << (other.sig - sig);
+    if (scale > other.scale) {
+      oMag = oMag << (scale - other.scale);
+    } else if (scale < other.scale) {
+      tMag = tMag << (other.scale - scale);
     }
     return tMag.compareTo(oMag);
   }
 
   String format() {
     final intStr = mag.format();
-    if (sig == 0) {
+    if (scale == 0) {
       return intStr;
     }
     final StringBuilder sb = StringBuilder(intStr);
     final String head = sb.str[0];
-    final bool specialHead = head == mag.getSystem().getPositiveChar() ||
-        head == mag.getSystem().getNegativeChar();
+    final bool specialHead =
+        head == mag.system.positiveChar || head == mag.system.negativeChar;
     if (specialHead) {
       sb.remove(0, 1);
     }
-    while (sb.length < sig + 1) {
-      sb.insert(0, mag.getSystem().toChar(0));
+    while (sb.length < scale + 1) {
+      sb.insert(0, mag.system.toChar(0));
     }
-    sb.insert(sb.length - sig, mag.getSystem().getRadixPointChar());
-    if (sb.length - sig == 0) {
-      sb.insert(0, mag.getSystem().toChar(0));
+    sb.insert(sb.length - scale, mag.system.radixPointChar);
+    if (sb.length - scale == 0) {
+      sb.insert(0, mag.system.toChar(0));
     }
     if (specialHead) {
       sb.insert(0, head);
@@ -174,10 +170,10 @@ class LexoDecimal implements Comparable<LexoDecimal> {
       other is LexoDecimal &&
           runtimeType == other.runtimeType &&
           mag == other.mag &&
-          sig == other.sig;
+          scale == other.scale;
 
   @override
-  int get hashCode => mag.hashCode ^ sig.hashCode;
+  int get hashCode => mag.hashCode ^ scale.hashCode;
 
   @override
   String toString() {

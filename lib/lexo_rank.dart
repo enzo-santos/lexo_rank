@@ -2,7 +2,7 @@ library lexo_rank;
 
 import 'package:lexo_rank/lexo_rank/lexo_integer.dart';
 
-import '../numeral_systems/lexoNumeralSystem36.dart';
+import '../numeral_systems/lexo_numeral_system_36.dart';
 import '../utils/string_builder.dart';
 import 'lexo_rank/lexo_decimal.dart';
 import 'lexo_rank/lexo_rank_bucket.dart';

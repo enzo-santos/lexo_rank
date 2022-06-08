@@ -1,12 +1,9 @@
-import 'lexoNumeralSystem.dart';
+import 'lexo_numeral_system.dart';
 
-class LexoNumeralSystem36 implements LexoNumeralSystem {
-  static final List<String> DIGITS =
-      '0123456789abcdefghijklmnopqrstuvwxyz'.split('');
-
+class LexoNumeralSystem10 implements LexoNumeralSystem {
   @override
   int getBase() {
-    return 36;
+    return 10;
   }
 
   @override
@@ -21,7 +18,7 @@ class LexoNumeralSystem36 implements LexoNumeralSystem {
 
   @override
   String getRadixPointChar() {
-    return ':';
+    return '.';
   }
 
   @override
@@ -30,15 +27,11 @@ class LexoNumeralSystem36 implements LexoNumeralSystem {
         ch.codeUnitAt(0) <= '9'.codeUnitAt(0)) {
       return ch.codeUnitAt(0) - 48;
     }
-    if (ch.codeUnitAt(0) >= 'a'.codeUnitAt(0) &&
-        ch.codeUnitAt(0) <= 'z'.codeUnitAt(0)) {
-      return ch.codeUnitAt(0) - 97 + 10;
-    }
     throw AssertionError('Not valid digit: ' + ch);
   }
 
   @override
   String toChar(int digit) {
-    return DIGITS[digit];
+    return String.fromCharCode(digit + 48);
   }
 }

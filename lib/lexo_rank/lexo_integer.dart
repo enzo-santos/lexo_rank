@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import '../numeral_systems/lexoNumeralSystem.dart';
+import '../numeral_systems/lexo_numeral_system.dart';
 import '../utils/string_builder.dart';
 import 'lexo_helper.dart' as lexoHelper;
 

@@ -47,11 +47,11 @@ class LexoInteger {
     return LexoInteger(sys, sign, nmag);
   }
 
-  static final List<int> ZERO_MAG = [0];
-  static final List<int> ONE_MAG = [1];
-  static final int NEGATIVE_SIGN = -1;
-  static final int ZERO_SIGN = 0;
-  static final int POSITIVE_SIGN = 1;
+  static const List<int> ZERO_MAG = [0];
+  static const List<int> ONE_MAG = [1];
+  static const int NEGATIVE_SIGN = -1;
+  static const int ZERO_SIGN = 0;
+  static const int POSITIVE_SIGN = 1;
 
   static List<int> Add(LexoNumeralSystem sys, List<int> l, List<int> r) {
     final int estimatedSize = max(l.length, r.length);

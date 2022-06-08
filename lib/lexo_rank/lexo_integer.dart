@@ -4,7 +4,7 @@ import '../numeral_systems/lexo_numeral_system.dart';
 import '../utils/string_builder.dart';
 import 'lexo_helper.dart' as lexo_helper;
 
-class LexoInteger {
+class LexoInteger implements Comparable<LexoInteger> {
   factory LexoInteger.parse(String strFull, LexoNumeralSystem system) {
     String str = strFull;
     int sign = 1;
@@ -141,7 +141,7 @@ class LexoInteger {
   const LexoInteger(LexoNumeralSystem system, this.sign, this.mag)
       : sys = system;
 
-  LexoInteger add(LexoInteger other) {
+  LexoInteger operator +(LexoInteger other) {
     checkSystem(other);
     if (isZero()) {
       return other;
@@ -152,21 +152,21 @@ class LexoInteger {
     if (sign != other.sign) {
       LexoInteger pos;
       if (sign == -1) {
-        pos = negate();
-        final LexoInteger val = pos.subtract(other);
-        return val.negate();
+        pos = -this;
+        final LexoInteger val = pos - other;
+        return -val;
       }
-      pos = other.negate();
-      return subtract(pos);
+      pos = -other;
+      return this - pos;
     }
     final List<int> result = LexoInteger.Add(sys, mag, other.mag);
     return LexoInteger.make(sys, sign, result);
   }
 
-  LexoInteger subtract(LexoInteger other) {
+  LexoInteger operator -(LexoInteger other) {
     checkSystem(other);
     if (isZero()) {
-      return other.negate();
+      return -other;
     }
     if (other.isZero()) {
       return this;
@@ -174,12 +174,12 @@ class LexoInteger {
     if (sign != other.sign) {
       LexoInteger negate;
       if (sign == -1) {
-        negate = this.negate();
-        final LexoInteger sum = negate.add(other);
-        return sum.negate();
+        negate = -this;
+        final LexoInteger sum = negate + other;
+        return -sum;
       }
-      negate = other.negate();
-      return add(negate);
+      negate = -other;
+      return this + negate;
     }
     final int cmp = LexoInteger.compare(mag, other.mag);
     if (cmp == 0) {
@@ -192,7 +192,7 @@ class LexoInteger {
             LexoInteger.Subtract(sys, mag, other.mag));
   }
 
-  LexoInteger multiply(LexoInteger other) {
+  LexoInteger operator *(LexoInteger other) {
     checkSystem(other);
     if (isZero()) {
       return this;
@@ -216,23 +216,23 @@ class LexoInteger {
         : LexoInteger.make(sys, -1, newMag);
   }
 
-  LexoInteger negate() {
+  LexoInteger operator -() {
     return isZero() ? this : LexoInteger.make(sys, sign == 1 ? -1 : 1, mag);
   }
 
-  LexoInteger shiftLeft([int times = 1]) {
+  LexoInteger operator <<(int times) {
     if (times == 0) {
       return this;
     }
     if (times < 0) {
-      return shiftRight(times.abs());
+      return this >> times.abs();
     }
     final List<int> nmag = List.filled(mag.length + times, 0);
     lexo_helper.arrayCopy(mag, 0, nmag, times, mag.length);
     return LexoInteger.make(sys, sign, nmag);
   }
 
-  LexoInteger shiftRight([int times = 1]) {
+  LexoInteger operator >>(int times) {
     if (mag.length - times <= 0) {
       return LexoInteger.zero(sys);
     }
@@ -241,13 +241,16 @@ class LexoInteger {
     return LexoInteger.make(sys, sign, nmag);
   }
 
-  LexoInteger complement() {
+  LexoInteger operator ~() {
     return complementDigits(mag.length);
   }
 
   LexoInteger complementDigits(int digits) {
     return LexoInteger.make(
-        sys, sign, LexoInteger.Complement(sys, mag, digits));
+      sys,
+      sign,
+      LexoInteger.Complement(sys, mag, digits),
+    );
   }
 
   bool isZero() {
@@ -262,6 +265,7 @@ class LexoInteger {
     return mag[index];
   }
 
+  @override
   int compareTo(LexoInteger other) {
     if (identical(this, other)) {
       return 0;
@@ -309,17 +313,16 @@ class LexoInteger {
     return sb.toString();
   }
 
-  bool equals(LexoInteger other) {
-    if (identical(this, other)) {
-      return true;
-    }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LexoInteger &&
+          runtimeType == other.runtimeType &&
+          sys.getBase() == other.sys.getBase() &&
+          compareTo(other) == 0;
 
-    // if (!other) {
-    //   return false;
-    // }
-
-    return sys.getBase() == other.sys.getBase() && compareTo(other) == 0;
-  }
+  @override
+  int get hashCode => sys.getBase().hashCode ^ sign.hashCode;
 
   @override
   String toString() {

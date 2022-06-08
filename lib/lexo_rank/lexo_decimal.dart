@@ -34,7 +34,7 @@ class LexoDecimal {
     for (int i = 0; i < sig && integer.getMag(i) == 0; ++i) {
       ++zeroCount;
     }
-    final LexoInteger newInteger = integer.shiftRight(zeroCount);
+    final LexoInteger newInteger = integer >> zeroCount;
     final int newSig = sig - zeroCount;
     return LexoDecimal(newInteger, newSig);
   }
@@ -54,13 +54,13 @@ class LexoDecimal {
     LexoInteger omag = other.mag;
     int osig;
     for (osig = other.sig; tsig < osig; ++tsig) {
-      tmag = tmag.shiftLeft();
+      tmag <<= 1;
     }
     while (tsig > osig) {
-      omag = omag.shiftLeft();
+      omag <<= 1;
       ++osig;
     }
-    return LexoDecimal.make(tmag.add(omag), tsig);
+    return LexoDecimal.make(tmag + omag, tsig);
   }
 
   LexoDecimal subtract(LexoDecimal other) {
@@ -69,21 +69,21 @@ class LexoDecimal {
     LexoInteger otherMag = other.mag;
     int otherSig;
     for (otherSig = other.sig; thisSig < otherSig; ++thisSig) {
-      thisMag = thisMag.shiftLeft();
+      thisMag <<= 1;
     }
     while (thisSig > otherSig) {
-      otherMag = otherMag.shiftLeft();
+      otherMag <<= 1;
       ++otherSig;
     }
-    return LexoDecimal.make(thisMag.subtract(otherMag), thisSig);
+    return LexoDecimal.make(thisMag - otherMag, thisSig);
   }
 
   LexoDecimal multiply(LexoDecimal other) {
-    return LexoDecimal.make(mag.multiply(other.mag), sig + other.sig);
+    return LexoDecimal.make(mag * other.mag, sig + other.sig);
   }
 
   LexoInteger floor() {
-    return mag.shiftRight(sig);
+    return mag >> sig;
   }
 
   LexoInteger ceil() {
@@ -91,7 +91,7 @@ class LexoDecimal {
       return mag;
     }
     final LexoInteger f = floor();
-    return f.add(LexoInteger.one(f.getSystem()));
+    return f + LexoInteger.one(f.getSystem());
   }
 
   bool isExact() {
@@ -118,9 +118,9 @@ class LexoDecimal {
       nsig = 0;
     }
     final int diff = sig - nsig;
-    LexoInteger nmag = mag.shiftRight(diff);
+    LexoInteger nmag = mag >> diff;
     if (ceiling) {
-      nmag = nmag.add(LexoInteger.one(nmag.getSystem()));
+      nmag += LexoInteger.one(nmag.getSystem());
     }
     return LexoDecimal.make(nmag, nsig);
   }
@@ -135,9 +135,9 @@ class LexoDecimal {
     LexoInteger tMag = mag;
     LexoInteger oMag = other.mag;
     if (sig > other.sig) {
-      oMag = oMag.shiftLeft(sig - other.sig);
+      oMag = oMag << (sig - other.sig);
     } else if (sig < other.sig) {
-      tMag = tMag.shiftLeft(other.sig - sig);
+      tMag = tMag << (other.sig - sig);
     }
     return tMag.compareTo(oMag);
   }
@@ -174,7 +174,7 @@ class LexoDecimal {
     // if (!other) {
     //   return false;
     // }
-    return mag.equals(other.mag) && sig == other.sig;
+    return mag == other.mag && sig == other.sig;
   }
 
   @override

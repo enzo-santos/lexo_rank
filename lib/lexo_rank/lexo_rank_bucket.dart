@@ -77,6 +77,6 @@ class LexoRankBucket {
     // if (!other) {
     //   return false;
     //}
-    return value.equals(other.value);
+    return value == other.value;
   }
 }

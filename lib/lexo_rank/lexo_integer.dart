@@ -138,8 +138,7 @@ class LexoInteger implements Comparable<LexoInteger> {
   final int sign;
   final List<int> mag;
 
-  const LexoInteger(LexoNumeralSystem system, this.sign, this.mag)
-      : system = system;
+  const LexoInteger(this.system, this.sign, this.mag);
 
   LexoInteger operator +(LexoInteger other) {
     checkSystem(other);

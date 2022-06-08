@@ -106,7 +106,7 @@ class LexoDecimal implements Comparable<LexoDecimal> {
     return true;
   }
 
-  LexoDecimal setScale(int nsig, [bool ceiling = false]) {
+  LexoDecimal withScale(int nsig, [bool ceiling = false]) {
     if (nsig >= scale) {
       return this;
     }

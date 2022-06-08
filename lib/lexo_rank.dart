@@ -50,14 +50,14 @@ class LexoRank {
     LexoDecimal right = oRight;
     LexoDecimal nLeft;
     if (oLeft.scale < oRight.scale) {
-      nLeft = oRight.setScale(oLeft.scale, false);
+      nLeft = oRight.withScale(oLeft.scale, false);
       if (oLeft.compareTo(nLeft) >= 0) {
         return LexoRank.mid(oLeft, oRight);
       }
       right = nLeft;
     }
     if (oLeft.scale > right.scale) {
-      nLeft = oLeft.setScale(right.scale, true);
+      nLeft = oLeft.withScale(right.scale, true);
       if (nLeft.compareTo(right) >= 0) {
         return LexoRank.mid(oLeft, oRight);
       }
@@ -66,8 +66,8 @@ class LexoRank {
     LexoDecimal nRight;
     for (int scale = left.scale; scale > 0; right = nRight) {
       final int nScale1 = scale - 1;
-      final LexoDecimal nLeft1 = left.setScale(nScale1, true);
-      nRight = right.setScale(nScale1, false);
+      final LexoDecimal nLeft1 = left.withScale(nScale1, true);
+      nRight = right.withScale(nScale1, false);
       final int cmp = nLeft1.compareTo(nRight);
       if (cmp == 0) {
         return LexoRank.checkMid(oLeft, oRight, nLeft1);
@@ -82,7 +82,7 @@ class LexoRank {
     int nScale;
     for (int mScale = mid.scale; mScale > 0; mScale = nScale) {
       nScale = mScale - 1;
-      final LexoDecimal nMid = mid.setScale(nScale);
+      final LexoDecimal nMid = mid.withScale(nScale);
       if (oLeft.compareTo(nMid) >= 0 || nMid.compareTo(oRight) >= 0) {
         break;
       }
@@ -132,11 +132,11 @@ class LexoRank {
     final LexoDecimal mid = sum * LexoDecimal.half(left.system);
     final int scale = left.scale > right.scale ? left.scale : right.scale;
     if (mid.scale > scale) {
-      final LexoDecimal roundDown = mid.setScale(scale, false);
+      final LexoDecimal roundDown = mid.withScale(scale, false);
       if (roundDown.compareTo(left) > 0) {
         return roundDown;
       }
-      final LexoDecimal roundUp = mid.setScale(scale, true);
+      final LexoDecimal roundUp = mid.withScale(scale, true);
       if (roundUp.compareTo(right) < 0) {
         return roundUp;
       }

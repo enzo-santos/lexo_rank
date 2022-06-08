@@ -1,7 +1,9 @@
 import 'lexoNumeralSystem.dart';
 
 class LexoNumeralSystem36 implements LexoNumeralSystem {
-  var DIGITS = '0123456789abcdefghijklmnopqrstuvwxyz'.split('');
+  static final List<String> DIGITS =
+      '0123456789abcdefghijklmnopqrstuvwxyz'.split('');
+
   @override
   int getBase() {
     return 36;

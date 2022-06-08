@@ -4,6 +4,7 @@ class StringBuilder {
   StringBuilder(String str) {
     this.str = str;
   }
+
   int get length {
     return str.length;
   }

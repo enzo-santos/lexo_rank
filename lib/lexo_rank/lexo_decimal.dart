@@ -4,19 +4,19 @@ import 'lexo_integer.dart';
 
 class LexoDecimal {
   static LexoDecimal half(LexoNumeralSystem sys) {
-    final mid = (sys.getBase() / 2).round() | 0;
+    final int mid = (sys.getBase() / 2).round() | 0;
     return LexoDecimal.make(LexoInteger.make(sys, 1, [mid]), 1);
   }
 
   static LexoDecimal parse(String str, LexoNumeralSystem system) {
-    final partialIndex = str.indexOf(system.getRadixPointChar());
-    if (!identical(str.lastIndexOf(system.getRadixPointChar()), partialIndex)) {
+    final int partialIndex = str.indexOf(system.getRadixPointChar());
+    if (str.lastIndexOf(system.getRadixPointChar()) != partialIndex) {
       throw AssertionError('More than one ' + system.getRadixPointChar());
     }
     if (partialIndex < 0) {
       return LexoDecimal.make(LexoInteger.parse(str, system), 0);
     }
-    final intStr =
+    final String intStr =
         str.substring(0, partialIndex) + str.substring(partialIndex + 1);
     return LexoDecimal.make(
         LexoInteger.parse(intStr, system), str.length - 1 - partialIndex);
@@ -30,30 +30,32 @@ class LexoDecimal {
     if (integer.isZero()) {
       return LexoDecimal(integer, 0);
     }
-    var zeroCount = 0;
-    for (var i = 0; i < sig && identical(integer.getMag(i), 0); ++i) {
+    int zeroCount = 0;
+    for (int i = 0; i < sig && integer.getMag(i) == 0; ++i) {
       ++zeroCount;
     }
-    final newInteger = integer.shiftRight(zeroCount);
-    final newSig = sig - zeroCount;
+    final LexoInteger newInteger = integer.shiftRight(zeroCount);
+    final int newSig = sig - zeroCount;
     return LexoDecimal(newInteger, newSig);
   }
 
   late LexoInteger mag;
   late int sig;
+
   LexoDecimal(LexoInteger mag, int sig) {
     this.mag = mag;
     this.sig = sig;
   }
+
   LexoNumeralSystem getSystem() {
     return mag.getSystem();
   }
 
   LexoDecimal add(LexoDecimal other) {
-    var tmag = mag;
-    var tsig = sig;
-    var omag = other.mag;
-    num osig;
+    LexoInteger tmag = mag;
+    int tsig = sig;
+    LexoInteger omag = other.mag;
+    int osig;
     for (osig = other.sig; tsig < osig; ++tsig) {
       tmag = tmag.shiftLeft();
     }
@@ -65,10 +67,10 @@ class LexoDecimal {
   }
 
   LexoDecimal subtract(LexoDecimal other) {
-    var thisMag = mag;
-    var thisSig = sig;
-    var otherMag = other.mag;
-    num otherSig;
+    LexoInteger thisMag = mag;
+    int thisSig = sig;
+    LexoInteger otherMag = other.mag;
+    int otherSig;
     for (otherSig = other.sig; thisSig < otherSig; ++thisSig) {
       thisMag = thisMag.shiftLeft();
     }
@@ -91,16 +93,16 @@ class LexoDecimal {
     if (isExact()) {
       return mag;
     }
-    final f = floor();
+    final LexoInteger f = floor();
     return f.add(LexoInteger.one(f.getSystem()));
   }
 
   bool isExact() {
-    if (identical(sig, 0)) {
+    if (sig == 0) {
       return true;
     }
-    for (var i = 0; i < sig; ++i) {
-      if (!identical(mag.getMag(i), 0)) {
+    for (int i = 0; i < sig; ++i) {
+      if (mag.getMag(i) != 0) {
         return false;
       }
     }
@@ -118,8 +120,8 @@ class LexoDecimal {
     if (nsig < 0) {
       nsig = 0;
     }
-    final diff = sig - nsig;
-    var nmag = mag.shiftRight(diff);
+    final int diff = sig - nsig;
+    LexoInteger nmag = mag.shiftRight(diff);
     if (ceiling) {
       nmag = nmag.add(LexoInteger.one(nmag.getSystem()));
     }
@@ -133,8 +135,8 @@ class LexoDecimal {
     // if (!other) {
     //   return 1;
     // }
-    var tMag = mag;
-    var oMag = other.mag;
+    LexoInteger tMag = mag;
+    LexoInteger oMag = other.mag;
     if (sig > other.sig) {
       oMag = oMag.shiftLeft(sig - other.sig);
     } else if (sig < other.sig) {
@@ -145,13 +147,13 @@ class LexoDecimal {
 
   String format() {
     final intStr = mag.format();
-    if (identical(sig, 0)) {
+    if (sig == 0) {
       return intStr;
     }
-    final sb = StringBuilder(intStr);
-    final head = sb.str[0];
-    final specialHead = identical(head, mag.getSystem().getPositiveChar()) ||
-        identical(head, mag.getSystem().getNegativeChar());
+    final StringBuilder sb = StringBuilder(intStr);
+    final String head = sb.str[0];
+    final bool specialHead = head == mag.getSystem().getPositiveChar() ||
+        head == mag.getSystem().getNegativeChar();
     if (specialHead) {
       sb.remove(0, 1);
     }
@@ -159,7 +161,7 @@ class LexoDecimal {
       sb.insert(0, mag.getSystem().toChar(0));
     }
     sb.insert(sb.length - sig, mag.getSystem().getRadixPointChar());
-    if (identical(sb.length - sig, 0)) {
+    if (sb.length - sig == 0) {
       sb.insert(0, mag.getSystem().toChar(0));
     }
     if (specialHead) {
@@ -175,7 +177,7 @@ class LexoDecimal {
     // if (!other) {
     //   return false;
     // }
-    return mag.equals(other.mag) && identical(sig, other.sig);
+    return mag.equals(other.mag) && sig == other.sig;
   }
 
   @override

@@ -2,21 +2,21 @@ import '../lexo_rank.dart';
 import 'lexo_integer.dart';
 
 class LexoRankBucket {
-  static final BUCKET_0 = LexoRankBucket('0');
-  static final BUCKET_1 = LexoRankBucket('1');
-  static final BUCKET_2 = LexoRankBucket('2');
-  static final VALUES = [BUCKET_0, BUCKET_1, BUCKET_2];
+  static final LexoRankBucket BUCKET_0 = LexoRankBucket('0');
+  static final LexoRankBucket BUCKET_1 = LexoRankBucket('1');
+  static final LexoRankBucket BUCKET_2 = LexoRankBucket('2');
+  static final List<LexoRankBucket> VALUES = [BUCKET_0, BUCKET_1, BUCKET_2];
 
   static LexoRankBucket max() {
     return LexoRankBucket.VALUES[LexoRankBucket.VALUES.length - 1];
   }
 
   static LexoRankBucket from(String str) {
-    final val = LexoInteger.parse(str, LexoRank.NUMERAL_SYSTEM);
-    final var2 = LexoRankBucket.VALUES;
-    final var3 = var2.length;
-    for (var var4 = 0; var4 < var3; ++var4) {
-      final bucket = var2[var4];
+    final LexoInteger val = LexoInteger.parse(str, LexoRank.NUMERAL_SYSTEM);
+    final List<LexoRankBucket> var2 = LexoRankBucket.VALUES;
+    final int var3 = var2.length;
+    for (int var4 = 0; var4 < var3; ++var4) {
+      final LexoRankBucket bucket = var2[var4];
       if (bucket.value.sign == val.sign) {
         return bucket;
       }
@@ -26,10 +26,10 @@ class LexoRankBucket {
   }
 
   static LexoRankBucket resolve(int bucketId) {
-    final var1 = LexoRankBucket.VALUES;
-    final var2 = var1.length;
-    for (var var3 = 0; var3 < var2; ++var3) {
-      final bucket = var1[var3];
+    final List<LexoRankBucket> var1 = LexoRankBucket.VALUES;
+    final int var2 = var1.length;
+    for (int var3 = 0; var3 < var2; ++var3) {
+      final LexoRankBucket bucket = var1[var3];
       if (bucket.equals(LexoRankBucket.from(bucketId.toString()))) {
         return bucket;
       }
@@ -38,9 +38,11 @@ class LexoRankBucket {
   }
 
   late LexoInteger value;
+
   LexoRankBucket(String val) {
     value = LexoInteger.parse(val, LexoRank.NUMERAL_SYSTEM);
   }
+
   String format() {
     return value.format();
   }

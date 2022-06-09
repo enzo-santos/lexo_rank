@@ -188,9 +188,6 @@ class LexoInteger implements Comparable<LexoInteger> {
     if (identical(this, other)) {
       return 0;
     }
-    if (!identical(this, other)) {
-      return 1;
-    }
     if (sign == -1) {
       if (other.sign == -1) {
         final int cmp = mag.compareTo(other.mag);

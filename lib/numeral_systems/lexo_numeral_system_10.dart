@@ -1,23 +1,23 @@
-import 'lexoNumeralSystem.dart';
+import 'lexo_numeral_system.dart';
 
 class LexoNumeralSystem10 implements LexoNumeralSystem {
   @override
-  int getBase() {
+  int get base {
     return 10;
   }
 
   @override
-  String getPositiveChar() {
+  String get positiveChar {
     return '+';
   }
 
   @override
-  String getNegativeChar() {
+  String get negativeChar {
     return '-';
   }
 
   @override
-  String getRadixPointChar() {
+  String get radixPointChar {
     return '.';
   }
 

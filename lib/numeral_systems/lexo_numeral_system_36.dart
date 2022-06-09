@@ -1,24 +1,64 @@
-import 'lexoNumeralSystem.dart';
+import 'lexo_numeral_system.dart';
 
 class LexoNumeralSystem36 implements LexoNumeralSystem {
-  var DIGITS = '0123456789abcdefghijklmnopqrstuvwxyz'.split('');
+  static const List<String> digits = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'h',
+    'i',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'o',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'u',
+    'v',
+    'w',
+    'x',
+    'y',
+    'z',
+  ];
+
+  const LexoNumeralSystem36();
+
   @override
-  int getBase() {
+  int get base {
     return 36;
   }
 
   @override
-  String getPositiveChar() {
+  String get positiveChar {
     return '+';
   }
 
   @override
-  String getNegativeChar() {
+  String get negativeChar {
     return '-';
   }
 
   @override
-  String getRadixPointChar() {
+  String get radixPointChar {
     return ':';
   }
 
@@ -37,6 +77,6 @@ class LexoNumeralSystem36 implements LexoNumeralSystem {
 
   @override
   String toChar(int digit) {
-    return DIGITS[digit];
+    return digits[digit];
   }
 }

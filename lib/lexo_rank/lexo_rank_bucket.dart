@@ -2,10 +2,13 @@ import '../lexo_rank.dart';
 import 'lexo_integer.dart';
 
 class LexoRankBucket {
-  static final LexoRankBucket bucket0 = LexoRankBucket('0');
-  static final LexoRankBucket bucket1 = LexoRankBucket('1');
-  static final LexoRankBucket bucket2 = LexoRankBucket('2');
-  static final List<LexoRankBucket> values = [bucket0, bucket1, bucket2];
+  static const LexoRankBucket bucket0 =
+      LexoRankBucket._(LexoInteger(LexoRank.numeralSystem, 0, [0]));
+  static const LexoRankBucket bucket1 =
+      LexoRankBucket._(LexoInteger(LexoRank.numeralSystem, 1, [1]));
+  static const LexoRankBucket bucket2 =
+      LexoRankBucket._(LexoInteger(LexoRank.numeralSystem, 1, [2]));
+  static const List<LexoRankBucket> values = [bucket0, bucket1, bucket2];
 
   factory LexoRankBucket.max() {
     return LexoRankBucket.values[LexoRankBucket.values.length - 1];
@@ -39,8 +42,10 @@ class LexoRankBucket {
 
   final LexoInteger value;
 
-  LexoRankBucket(String val)
-      : value = LexoInteger.parse(val, LexoRank.numeralSystem);
+  const LexoRankBucket._(this.value);
+
+  LexoRankBucket(String value)
+      : value = LexoInteger.parse(value, LexoRank.numeralSystem);
 
   String format() {
     return value.format();

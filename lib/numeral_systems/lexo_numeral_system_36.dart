@@ -40,6 +40,8 @@ class LexoNumeralSystem36 implements LexoNumeralSystem {
     'z',
   ];
 
+  const LexoNumeralSystem36();
+
   @override
   int get base {
     return 36;

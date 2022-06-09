@@ -7,19 +7,19 @@ class LexoRankBucket {
   static const LexoRankBucket bucket0 = LexoRankBucket._(
     LexoInteger(
       LexoMagnitude(LexoRank.numeralSystem, [0]),
-      0,
+      sign: 0,
     ),
   );
   static const LexoRankBucket bucket1 = LexoRankBucket._(
     LexoInteger(
       LexoMagnitude(LexoRank.numeralSystem, [1]),
-      1,
+      sign: 1,
     ),
   );
   static const LexoRankBucket bucket2 = LexoRankBucket._(
     LexoInteger(
       LexoMagnitude(LexoRank.numeralSystem, [2]),
-      1,
+      sign: 1,
     ),
   );
   static const List<LexoRankBucket> values = [bucket0, bucket1, bucket2];

@@ -24,11 +24,11 @@ class LexoInteger implements Comparable<LexoInteger> {
   }
 
   factory LexoInteger.zero(LexoNumeralSystem sys) {
-    return LexoInteger(LexoMagnitude(sys, [0]), 0);
+    return LexoInteger(LexoMagnitude(sys, [0]), sign: 0);
   }
 
   factory LexoInteger.one(LexoNumeralSystem sys) {
-    return LexoInteger(LexoMagnitude(sys, [1]), 1);
+    return LexoInteger(LexoMagnitude(sys, [1]), sign: 1);
   }
 
   factory LexoInteger.make(LexoMagnitude magnitude, int sign) {
@@ -40,11 +40,11 @@ class LexoInteger implements Comparable<LexoInteger> {
       return LexoInteger.zero(magnitude.system);
     }
     if (actualLength == magnitude.value.length) {
-      return LexoInteger(magnitude, sign);
+      return LexoInteger(magnitude, sign: sign);
     }
     final List<int> nmag = List.filled(actualLength, 0);
     utils.arrayCopy(magnitude.value, 0, nmag, 0, actualLength);
-    return LexoInteger(LexoMagnitude(magnitude.system, nmag), sign);
+    return LexoInteger(LexoMagnitude(magnitude.system, nmag), sign: sign);
   }
 
   static const int negativeSign = -1;
@@ -54,12 +54,12 @@ class LexoInteger implements Comparable<LexoInteger> {
   final LexoMagnitude mag;
   final int sign;
 
-  const LexoInteger(this.mag, this.sign);
+  const LexoInteger(this.mag, {required this.sign});
 
   LexoNumeralSystem get system => mag.system;
 
   LexoInteger copyWith({int? sign}) {
-    return LexoInteger(mag, sign ?? this.sign);
+    return LexoInteger(mag, sign: sign ?? this.sign);
   }
 
   LexoInteger operator +(LexoInteger other) {

@@ -11,45 +11,45 @@ import 'lexo_rank/lexo_rank_bucket.dart';
 class LexoRank implements Comparable<LexoRank> {
   static const LexoNumeralSystem36 numeralSystem = LexoNumeralSystem36();
   static const LexoDecimal zeroDecimal = LexoDecimal(
-    LexoInteger(LexoMagnitude(numeralSystem, [0]), 0),
-    0,
+    LexoInteger(LexoMagnitude(numeralSystem, [0]), sign: 0),
+    scale: 0,
   );
   static const LexoDecimal oneDecimal = LexoDecimal(
-    LexoInteger(LexoMagnitude(numeralSystem, [1]), 1),
-    0,
+    LexoInteger(LexoMagnitude(numeralSystem, [1]), sign: 1),
+    scale: 0,
   );
   static const LexoDecimal eightDecimal = LexoDecimal(
-    LexoInteger(LexoMagnitude(numeralSystem, [8]), 1),
-    0,
+    LexoInteger(LexoMagnitude(numeralSystem, [8]), sign: 1),
+    scale: 0,
   );
   static const LexoDecimal minDecimal = zeroDecimal;
   static const LexoDecimal maxDecimal = LexoDecimal(
     LexoInteger(
       LexoMagnitude(numeralSystem, [35, 35, 35, 35, 35, 35]),
-      1,
+      sign: 1,
     ),
-    0,
+    scale: 0,
   );
   static const LexoDecimal midDecimal = LexoDecimal(
     LexoInteger(
       LexoMagnitude(numeralSystem, [35, 35, 35, 35, 35, 17]),
-      1,
+      sign: 1,
     ),
-    0,
+    scale: 0,
   );
   static const LexoDecimal initialMinDecimal = LexoDecimal(
     LexoInteger(
       LexoMagnitude(numeralSystem, [0, 0, 0, 0, 0, 1]),
-      1,
+      sign: 1,
     ),
-    0,
+    scale: 0,
   );
   static const LexoDecimal initialMaxDecimal = LexoDecimal(
     LexoInteger(
       LexoMagnitude(numeralSystem, [0, 0, 0, 0, 0, 34]),
-      1,
+      sign: 1,
     ),
-    0,
+    scale: 0,
   );
 
   factory LexoRank.min() {

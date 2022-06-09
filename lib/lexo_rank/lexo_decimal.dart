@@ -30,7 +30,7 @@ class LexoDecimal implements Comparable<LexoDecimal> {
 
   factory LexoDecimal.make(LexoInteger integer, int sig) {
     if (integer.isZero) {
-      return LexoDecimal(integer, 0);
+      return LexoDecimal(integer, scale: 0);
     }
     int zeroCount = 0;
     for (int i = 0; i < sig && integer.getMag(i) == 0; ++i) {
@@ -38,13 +38,13 @@ class LexoDecimal implements Comparable<LexoDecimal> {
     }
     final LexoInteger newInteger = integer >> zeroCount;
     final int newSig = sig - zeroCount;
-    return LexoDecimal(newInteger, newSig);
+    return LexoDecimal(newInteger, scale: newSig);
   }
 
   final LexoInteger mag;
   final int scale;
 
-  const LexoDecimal(this.mag, this.scale);
+  const LexoDecimal(this.mag, {required this.scale});
 
   LexoNumeralSystem get system {
     return mag.system;

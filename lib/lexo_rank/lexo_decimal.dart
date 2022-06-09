@@ -41,19 +41,19 @@ class LexoDecimal implements Comparable<LexoDecimal> {
     return LexoDecimal(newInteger, scale: newSig);
   }
 
-  final LexoInteger mag;
+  final LexoInteger magnitude;
   final int scale;
 
-  const LexoDecimal(this.mag, {required this.scale});
+  const LexoDecimal(this.magnitude, {required this.scale});
 
   LexoNumeralSystem get system {
-    return mag.system;
+    return magnitude.system;
   }
 
   LexoDecimal operator +(LexoDecimal other) {
-    LexoInteger tmag = mag;
+    LexoInteger tmag = magnitude;
     int tsig = scale;
-    LexoInteger omag = other.mag;
+    LexoInteger omag = other.magnitude;
     int osig;
     for (osig = other.scale; tsig < osig; ++tsig) {
       tmag <<= 1;
@@ -66,9 +66,9 @@ class LexoDecimal implements Comparable<LexoDecimal> {
   }
 
   LexoDecimal operator -(LexoDecimal other) {
-    LexoInteger thisMag = mag;
+    LexoInteger thisMag = magnitude;
     int thisSig = scale;
-    LexoInteger otherMag = other.mag;
+    LexoInteger otherMag = other.magnitude;
     int otherSig;
     for (otherSig = other.scale; thisSig < otherSig; ++thisSig) {
       thisMag <<= 1;
@@ -81,16 +81,16 @@ class LexoDecimal implements Comparable<LexoDecimal> {
   }
 
   LexoDecimal operator *(LexoDecimal other) {
-    return LexoDecimal.make(mag * other.mag, scale + other.scale);
+    return LexoDecimal.make(magnitude * other.magnitude, scale + other.scale);
   }
 
   LexoInteger floor() {
-    return mag >> scale;
+    return magnitude >> scale;
   }
 
   LexoInteger ceil() {
     if (isExact) {
-      return mag;
+      return magnitude;
     }
     final LexoInteger f = floor();
     return f + LexoInteger.one(f.system);
@@ -101,7 +101,7 @@ class LexoDecimal implements Comparable<LexoDecimal> {
       return true;
     }
     for (int i = 0; i < scale; ++i) {
-      if (mag.getMag(i) != 0) {
+      if (magnitude.getMag(i) != 0) {
         return false;
       }
     }
@@ -116,7 +116,7 @@ class LexoDecimal implements Comparable<LexoDecimal> {
       nsig = 0;
     }
     final int diff = scale - nsig;
-    LexoInteger nmag = mag >> diff;
+    LexoInteger nmag = magnitude >> diff;
     if (ceiling) {
       nmag += LexoInteger.one(nmag.system);
     }
@@ -131,8 +131,8 @@ class LexoDecimal implements Comparable<LexoDecimal> {
     // if (!other) {
     //   return 1;
     // }
-    LexoInteger tMag = mag;
-    LexoInteger oMag = other.mag;
+    LexoInteger tMag = magnitude;
+    LexoInteger oMag = other.magnitude;
     if (scale > other.scale) {
       oMag = oMag << (scale - other.scale);
     } else if (scale < other.scale) {
@@ -142,23 +142,23 @@ class LexoDecimal implements Comparable<LexoDecimal> {
   }
 
   String format() {
-    final intStr = mag.format();
+    final intStr = magnitude.format();
     if (scale == 0) {
       return intStr;
     }
     final StringBuilder sb = StringBuilder(intStr);
     final String head = sb.str[0];
-    final bool specialHead =
-        head == mag.system.positiveChar || head == mag.system.negativeChar;
+    final bool specialHead = head == magnitude.system.positiveChar ||
+        head == magnitude.system.negativeChar;
     if (specialHead) {
       sb.remove(0, 1);
     }
     while (sb.length < scale + 1) {
-      sb.insert(0, mag.system.toChar(0));
+      sb.insert(0, magnitude.system.toChar(0));
     }
-    sb.insert(sb.length - scale, mag.system.radixPointChar);
+    sb.insert(sb.length - scale, magnitude.system.radixPointChar);
     if (sb.length - scale == 0) {
-      sb.insert(0, mag.system.toChar(0));
+      sb.insert(0, magnitude.system.toChar(0));
     }
     if (specialHead) {
       sb.insert(0, head);
@@ -171,11 +171,11 @@ class LexoDecimal implements Comparable<LexoDecimal> {
       identical(this, other) ||
       other is LexoDecimal &&
           runtimeType == other.runtimeType &&
-          mag == other.mag &&
+          magnitude == other.magnitude &&
           scale == other.scale;
 
   @override
-  int get hashCode => mag.hashCode ^ scale.hashCode;
+  int get hashCode => magnitude.hashCode ^ scale.hashCode;
 
   @override
   String toString() {

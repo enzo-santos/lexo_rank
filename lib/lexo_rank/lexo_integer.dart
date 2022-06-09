@@ -14,13 +14,13 @@ class LexoInteger implements Comparable<LexoInteger> {
       str = strFull.substring(1);
       sign = -1;
     }
-    final List<int> mag = List.filled(str.length, 0);
-    int strIndex = mag.length - 1;
+    final List<int> magnitude = List.filled(str.length, 0);
+    int strIndex = magnitude.length - 1;
     for (int magIndex = 0; strIndex >= 0; ++magIndex) {
-      mag[magIndex] = system.toDigit(str[strIndex]);
+      magnitude[magIndex] = system.toDigit(str[strIndex]);
       --strIndex;
     }
-    return LexoInteger.make(LexoMagnitude(system, mag), sign);
+    return LexoInteger.make(LexoMagnitude(system, magnitude), sign);
   }
 
   factory LexoInteger.zero(LexoNumeralSystem sys) {
@@ -51,15 +51,15 @@ class LexoInteger implements Comparable<LexoInteger> {
   static const int zeroSign = 0;
   static const int positiveSign = 1;
 
-  final LexoMagnitude mag;
+  final LexoMagnitude magnitude;
   final int sign;
 
-  const LexoInteger(this.mag, {required this.sign});
+  const LexoInteger(this.magnitude, {required this.sign});
 
-  LexoNumeralSystem get system => mag.system;
+  LexoNumeralSystem get system => magnitude.system;
 
   LexoInteger copyWith({int? sign}) {
-    return LexoInteger(mag, sign: sign ?? this.sign);
+    return LexoInteger(magnitude, sign: sign ?? this.sign);
   }
 
   LexoInteger operator +(LexoInteger other) {
@@ -80,7 +80,7 @@ class LexoInteger implements Comparable<LexoInteger> {
       pos = -other;
       return this - pos;
     }
-    return LexoInteger.make(mag + other.mag, sign);
+    return LexoInteger.make(magnitude + other.magnitude, sign);
   }
 
   LexoInteger operator -(LexoInteger other) {
@@ -101,13 +101,13 @@ class LexoInteger implements Comparable<LexoInteger> {
       negate = -other;
       return this + negate;
     }
-    final int cmp = mag.compareTo(other.mag);
+    final int cmp = magnitude.compareTo(other.magnitude);
     if (cmp == 0) {
       return LexoInteger.zero(system);
     }
     return cmp < 0
-        ? LexoInteger.make(other.mag - mag, sign == -1 ? 1 : -1)
-        : LexoInteger.make(mag - other.mag, sign == -1 ? -1 : 1);
+        ? LexoInteger.make(other.magnitude - magnitude, sign == -1 ? 1 : -1)
+        : LexoInteger.make(magnitude - other.magnitude, sign == -1 ? -1 : 1);
   }
 
   LexoInteger operator *(LexoInteger other) {
@@ -120,22 +120,22 @@ class LexoInteger implements Comparable<LexoInteger> {
     }
     if (isOneish) {
       return sign == other.sign
-          ? LexoInteger.make(other.mag, 1)
-          : LexoInteger.make(other.mag, -1);
+          ? LexoInteger.make(other.magnitude, 1)
+          : LexoInteger.make(other.magnitude, -1);
     }
     if (other.isOneish) {
       return sign == other.sign
-          ? LexoInteger.make(mag, 1)
-          : LexoInteger.make(mag, -1);
+          ? LexoInteger.make(magnitude, 1)
+          : LexoInteger.make(magnitude, -1);
     }
-    final LexoMagnitude newMag = mag * other.mag;
+    final LexoMagnitude newMag = magnitude * other.magnitude;
     return sign == other.sign
         ? LexoInteger.make(newMag, 1)
         : LexoInteger.make(newMag, -1);
   }
 
   LexoInteger operator -() {
-    return isZero ? this : LexoInteger.make(mag, sign == 1 ? -1 : 1);
+    return isZero ? this : LexoInteger.make(magnitude, sign == 1 ? -1 : 1);
   }
 
   LexoInteger operator <<(int times) {
@@ -145,42 +145,42 @@ class LexoInteger implements Comparable<LexoInteger> {
     if (times < 0) {
       return this >> times.abs();
     }
-    final List<int> nmag = List.filled(mag.value.length + times, 0);
-    utils.arrayCopy(mag.value, 0, nmag, times, mag.value.length);
+    final List<int> nmag = List.filled(magnitude.value.length + times, 0);
+    utils.arrayCopy(magnitude.value, 0, nmag, times, magnitude.value.length);
     return LexoInteger.make(LexoMagnitude(system, nmag), sign);
   }
 
   LexoInteger operator >>(int times) {
-    if (mag.value.length - times <= 0) {
+    if (magnitude.value.length - times <= 0) {
       return LexoInteger.zero(system);
     }
-    final List<int> nmag = List.filled(mag.value.length - times, 0);
-    utils.arrayCopy(mag.value, times, nmag, 0, nmag.length);
+    final List<int> nmag = List.filled(magnitude.value.length - times, 0);
+    utils.arrayCopy(magnitude.value, times, nmag, 0, nmag.length);
     return LexoInteger.make(LexoMagnitude(system, nmag), sign);
   }
 
   LexoInteger operator ~() {
-    return complementDigits(mag.value.length);
+    return complementDigits(magnitude.value.length);
   }
 
   LexoInteger complementDigits(int digits) {
-    return LexoInteger.make(mag.complement(digits), sign);
+    return LexoInteger.make(magnitude.complement(digits), sign);
   }
 
   bool get isZero {
-    return sign == 0 && mag.value.length == 1 && mag.value[0] == 0;
+    return sign == 0 && magnitude.value.length == 1 && magnitude.value[0] == 0;
   }
 
   bool get isOne {
-    return sign == 1 && mag.value.length == 1 && mag.value[0] == 1;
+    return sign == 1 && magnitude.value.length == 1 && magnitude.value[0] == 1;
   }
 
   bool get isOneish {
-    return mag.value.length == 1 && mag.value[0] == 1;
+    return magnitude.value.length == 1 && magnitude.value[0] == 1;
   }
 
   int getMag(int index) {
-    return mag.value[index];
+    return magnitude.value[index];
   }
 
   @override
@@ -190,7 +190,7 @@ class LexoInteger implements Comparable<LexoInteger> {
     }
     if (sign == -1) {
       if (other.sign == -1) {
-        final int cmp = mag.compareTo(other.mag);
+        final int cmp = magnitude.compareTo(other.magnitude);
         if (cmp == -1) {
           return 1;
         }
@@ -199,7 +199,7 @@ class LexoInteger implements Comparable<LexoInteger> {
       return -1;
     }
     if (sign == 1) {
-      return other.sign == 1 ? mag.compareTo(other.mag) : 1;
+      return other.sign == 1 ? magnitude.compareTo(other.magnitude) : 1;
     }
     if (other.sign == -1) {
       return 1;
@@ -212,7 +212,7 @@ class LexoInteger implements Comparable<LexoInteger> {
       return '' + system.toChar(0);
     }
     final StringBuilder sb = StringBuilder('');
-    final List<int> var2 = mag.value;
+    final List<int> var2 = magnitude.value;
     final int var3 = var2.length;
     for (int var4 = 0; var4 < var3; ++var4) {
       final int digit = var2[var4];

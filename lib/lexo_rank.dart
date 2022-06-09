@@ -1,6 +1,7 @@
 library lexo_rank;
 
 import 'package:lexo_rank/lexo_rank/lexo_integer.dart';
+import 'package:lexo_rank/lexo_rank/lexo_magnitude.dart';
 
 import '../numeral_systems/lexo_numeral_system_36.dart';
 import '../utils/string_builder.dart';
@@ -9,21 +10,47 @@ import 'lexo_rank/lexo_rank_bucket.dart';
 
 class LexoRank implements Comparable<LexoRank> {
   static const LexoNumeralSystem36 numeralSystem = LexoNumeralSystem36();
-  static const LexoDecimal zeroDecimal =
-      LexoDecimal(LexoInteger(numeralSystem, 0, [0]), 0);
-  static const LexoDecimal oneDecimal =
-      LexoDecimal(LexoInteger(numeralSystem, 1, [1]), 0);
-  static const LexoDecimal eightDecimal =
-      LexoDecimal(LexoInteger(numeralSystem, 1, [8]), 0);
+  static const LexoDecimal zeroDecimal = LexoDecimal(
+    LexoInteger(LexoMagnitude(numeralSystem, [0]), 0),
+    0,
+  );
+  static const LexoDecimal oneDecimal = LexoDecimal(
+    LexoInteger(LexoMagnitude(numeralSystem, [1]), 1),
+    0,
+  );
+  static const LexoDecimal eightDecimal = LexoDecimal(
+    LexoInteger(LexoMagnitude(numeralSystem, [8]), 1),
+    0,
+  );
   static const LexoDecimal minDecimal = zeroDecimal;
-  static const LexoDecimal maxDecimal =
-      LexoDecimal(LexoInteger(numeralSystem, 1, [35, 35, 35, 35, 35, 35]), 0);
-  static const LexoDecimal midDecimal =
-      LexoDecimal(LexoInteger(numeralSystem, 1, [35, 35, 35, 35, 35, 17]), 0);
-  static const LexoDecimal initialMinDecimal =
-      LexoDecimal(LexoInteger(numeralSystem, 1, [0, 0, 0, 0, 0, 1]), 0);
-  static const LexoDecimal initialMaxDecimal =
-      LexoDecimal(LexoInteger(numeralSystem, 1, [0, 0, 0, 0, 0, 34]), 0);
+  static const LexoDecimal maxDecimal = LexoDecimal(
+    LexoInteger(
+      LexoMagnitude(numeralSystem, [35, 35, 35, 35, 35, 35]),
+      1,
+    ),
+    0,
+  );
+  static const LexoDecimal midDecimal = LexoDecimal(
+    LexoInteger(
+      LexoMagnitude(numeralSystem, [35, 35, 35, 35, 35, 17]),
+      1,
+    ),
+    0,
+  );
+  static const LexoDecimal initialMinDecimal = LexoDecimal(
+    LexoInteger(
+      LexoMagnitude(numeralSystem, [0, 0, 0, 0, 0, 1]),
+      1,
+    ),
+    0,
+  );
+  static const LexoDecimal initialMaxDecimal = LexoDecimal(
+    LexoInteger(
+      LexoMagnitude(numeralSystem, [0, 0, 0, 0, 0, 34]),
+      1,
+    ),
+    0,
+  );
 
   factory LexoRank.min() {
     return LexoRank.from(LexoRankBucket.bucket0, LexoRank.minDecimal);

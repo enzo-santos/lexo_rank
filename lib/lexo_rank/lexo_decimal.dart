@@ -1,3 +1,5 @@
+import 'package:lexo_rank/lexo_rank/lexo_magnitude.dart';
+
 import '../numeral_systems/lexo_numeral_system.dart';
 import '../utils/string_builder.dart';
 import 'lexo_integer.dart';
@@ -5,7 +7,7 @@ import 'lexo_integer.dart';
 class LexoDecimal implements Comparable<LexoDecimal> {
   factory LexoDecimal.half(LexoNumeralSystem sys) {
     final int mid = (sys.base / 2).round() | 0;
-    return LexoDecimal.make(LexoInteger.make(sys, 1, [mid]), 1);
+    return LexoDecimal.make(LexoInteger.make(LexoMagnitude(sys, [mid]), 1), 1);
   }
 
   factory LexoDecimal.parse(String str, LexoNumeralSystem system) {

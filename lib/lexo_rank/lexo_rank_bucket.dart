@@ -1,13 +1,27 @@
+import 'package:lexo_rank/lexo_rank/lexo_magnitude.dart';
+
 import '../lexo_rank.dart';
 import 'lexo_integer.dart';
 
 class LexoRankBucket {
-  static const LexoRankBucket bucket0 =
-      LexoRankBucket._(LexoInteger(LexoRank.numeralSystem, 0, [0]));
-  static const LexoRankBucket bucket1 =
-      LexoRankBucket._(LexoInteger(LexoRank.numeralSystem, 1, [1]));
-  static const LexoRankBucket bucket2 =
-      LexoRankBucket._(LexoInteger(LexoRank.numeralSystem, 1, [2]));
+  static const LexoRankBucket bucket0 = LexoRankBucket._(
+    LexoInteger(
+      LexoMagnitude(LexoRank.numeralSystem, [0]),
+      0,
+    ),
+  );
+  static const LexoRankBucket bucket1 = LexoRankBucket._(
+    LexoInteger(
+      LexoMagnitude(LexoRank.numeralSystem, [1]),
+      1,
+    ),
+  );
+  static const LexoRankBucket bucket2 = LexoRankBucket._(
+    LexoInteger(
+      LexoMagnitude(LexoRank.numeralSystem, [2]),
+      1,
+    ),
+  );
   static const List<LexoRankBucket> values = [bucket0, bucket1, bucket2];
 
   factory LexoRankBucket.max() {

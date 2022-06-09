@@ -1,8 +1,8 @@
-import 'dart:math';
+import 'package:lexo_rank/lexo_rank/lexo_magnitude.dart';
 
 import '../numeral_systems/lexo_numeral_system.dart';
 import '../utils/string_builder.dart';
-import 'lexo_helper.dart' as lexo_helper;
+import 'lexo_helper.dart' as utils;
 
 class LexoInteger implements Comparable<LexoInteger> {
   factory LexoInteger.parse(String strFull, LexoNumeralSystem system) {
@@ -20,125 +20,47 @@ class LexoInteger implements Comparable<LexoInteger> {
       mag[magIndex] = system.toDigit(str[strIndex]);
       --strIndex;
     }
-    return LexoInteger.make(system, sign, mag);
+    return LexoInteger.make(LexoMagnitude(system, mag), sign);
   }
 
   factory LexoInteger.zero(LexoNumeralSystem sys) {
-    return LexoInteger(sys, 0, LexoInteger.zeroMag);
+    return LexoInteger(LexoMagnitude(sys, [0]), 0);
   }
 
   factory LexoInteger.one(LexoNumeralSystem sys) {
-    return LexoInteger.make(sys, 1, LexoInteger.oneMag);
+    return LexoInteger(LexoMagnitude(sys, [1]), 1);
   }
 
-  factory LexoInteger.make(LexoNumeralSystem sys, int sign, List<int> mag) {
+  factory LexoInteger.make(LexoMagnitude magnitude, int sign) {
     int actualLength;
-    for (actualLength = mag.length;
-        actualLength > 0 && mag[actualLength - 1] == 0;
+    for (actualLength = magnitude.value.length;
+        actualLength > 0 && magnitude.value[actualLength - 1] == 0;
         --actualLength) {}
     if (actualLength == 0) {
-      return LexoInteger.zero(sys);
+      return LexoInteger.zero(magnitude.system);
     }
-    if (actualLength == mag.length) {
-      return LexoInteger(sys, sign, mag);
+    if (actualLength == magnitude.value.length) {
+      return LexoInteger(magnitude, sign);
     }
     final List<int> nmag = List.filled(actualLength, 0);
-    lexo_helper.arrayCopy(mag, 0, nmag, 0, actualLength);
-    return LexoInteger(sys, sign, nmag);
+    utils.arrayCopy(magnitude.value, 0, nmag, 0, actualLength);
+    return LexoInteger(LexoMagnitude(magnitude.system, nmag), sign);
   }
 
-  static const List<int> zeroMag = [0];
-  static const List<int> oneMag = [1];
   static const int negativeSign = -1;
   static const int zeroSign = 0;
   static const int positiveSign = 1;
 
-  static List<int> Add(LexoNumeralSystem sys, List<int> l, List<int> r) {
-    final int estimatedSize = max(l.length, r.length);
-    final List<int> result = List.filled(estimatedSize, 0);
-    int carry = 0;
-    for (int i = 0; i < estimatedSize; ++i) {
-      final int lnum = i < l.length ? l[i] : 0;
-      final int rnum = i < r.length ? r[i] : 0;
-      int sum = lnum + rnum + carry;
-      for (carry = 0; sum >= sys.base; sum -= sys.base) {
-        ++carry;
-      }
-      result[i] = sum;
-    }
-    return LexoInteger.extendWithCarry(result, carry);
-  }
-
-  static List<int> extendWithCarry(List<int> mag, int carry) {
-    if (carry > 0) {
-      final List<int> extendedMag = List.filled(mag.length + 1, 0);
-      lexo_helper.arrayCopy(mag, 0, extendedMag, 0, mag.length);
-      extendedMag[extendedMag.length - 1] = carry;
-      return extendedMag;
-    }
-    return mag;
-  }
-
-  static List<int> Subtract(LexoNumeralSystem sys, List<int> l, List<int> r) {
-    final List<int> rComplement = LexoInteger.Complement(sys, r, l.length);
-    final List<int> rSum = LexoInteger.Add(sys, l, rComplement);
-    rSum[rSum.length - 1] = 0;
-    return LexoInteger.Add(sys, rSum, LexoInteger.oneMag);
-  }
-
-  static List<int> Multiply(LexoNumeralSystem sys, List<int> l, List<int> r) {
-    final List<int> result = List.filled(l.length + r.length, 0);
-    for (int li = 0; li < l.length; ++li) {
-      for (int ri = 0; ri < r.length; ++ri) {
-        final int resultIndex = li + ri;
-        for (result[resultIndex] += l[li] * r[ri];
-            result[resultIndex] >= sys.base;
-            result[resultIndex] -= sys.base) {
-          ++result[resultIndex + 1];
-        }
-      }
-    }
-    return result;
-  }
-
-  static List<int> Complement(
-    LexoNumeralSystem sys,
-    List<int> mag,
-    int digits,
-  ) {
-    if (digits <= 0) {
-      throw AssertionError('Expected at least 1 digit');
-    }
-    final List<int> nmag = List.filled(digits, sys.base - 1);
-    for (int i = 0; i < mag.length; ++i) {
-      nmag[i] = sys.base - 1 - mag[i];
-    }
-    return nmag;
-  }
-
-  static int compare(List<int> l, List<int> r) {
-    if (l.length < r.length) {
-      return -1;
-    }
-    if (l.length > r.length) {
-      return 1;
-    }
-    for (int i = l.length - 1; i >= 0; --i) {
-      if (l[i] < r[i]) {
-        return -1;
-      }
-      if (l[i] > r[i]) {
-        return 1;
-      }
-    }
-    return 0;
-  }
-
-  final LexoNumeralSystem system;
+  final LexoMagnitude mag;
   final int sign;
-  final List<int> mag;
 
-  const LexoInteger(this.system, this.sign, this.mag);
+  const LexoInteger(this.mag, this.sign);
+
+  LexoNumeralSystem get system => mag.system;
+
+  LexoInteger copyWith({int? sign}) {
+    return LexoInteger(mag, sign ?? this.sign);
+  }
 
   LexoInteger operator +(LexoInteger other) {
     checkSystem(other);
@@ -158,8 +80,7 @@ class LexoInteger implements Comparable<LexoInteger> {
       pos = -other;
       return this - pos;
     }
-    final List<int> result = LexoInteger.Add(system, mag, other.mag);
-    return LexoInteger.make(system, sign, result);
+    return LexoInteger.make(mag + other.mag, sign);
   }
 
   LexoInteger operator -(LexoInteger other) {
@@ -180,15 +101,13 @@ class LexoInteger implements Comparable<LexoInteger> {
       negate = -other;
       return this + negate;
     }
-    final int cmp = LexoInteger.compare(mag, other.mag);
+    final int cmp = mag.compareTo(other.mag);
     if (cmp == 0) {
       return LexoInteger.zero(system);
     }
     return cmp < 0
-        ? LexoInteger.make(
-            system, sign == -1 ? 1 : -1, LexoInteger.Subtract(system, other.mag, mag))
-        : LexoInteger.make(system, sign == -1 ? -1 : 1,
-            LexoInteger.Subtract(system, mag, other.mag));
+        ? LexoInteger.make(other.mag - mag, sign == -1 ? 1 : -1)
+        : LexoInteger.make(mag - other.mag, sign == -1 ? -1 : 1);
   }
 
   LexoInteger operator *(LexoInteger other) {
@@ -201,22 +120,22 @@ class LexoInteger implements Comparable<LexoInteger> {
     }
     if (isOneish) {
       return sign == other.sign
-          ? LexoInteger.make(system, 1, other.mag)
-          : LexoInteger.make(system, -1, other.mag);
+          ? LexoInteger.make(other.mag, 1)
+          : LexoInteger.make(other.mag, -1);
     }
     if (other.isOneish) {
       return sign == other.sign
-          ? LexoInteger.make(system, 1, mag)
-          : LexoInteger.make(system, -1, mag);
+          ? LexoInteger.make(mag, 1)
+          : LexoInteger.make(mag, -1);
     }
-    final List<int> newMag = LexoInteger.Multiply(system, mag, other.mag);
+    final LexoMagnitude newMag = mag * other.mag;
     return sign == other.sign
-        ? LexoInteger.make(system, 1, newMag)
-        : LexoInteger.make(system, -1, newMag);
+        ? LexoInteger.make(newMag, 1)
+        : LexoInteger.make(newMag, -1);
   }
 
   LexoInteger operator -() {
-    return isZero ? this : LexoInteger.make(system, sign == 1 ? -1 : 1, mag);
+    return isZero ? this : LexoInteger.make(mag, sign == 1 ? -1 : 1);
   }
 
   LexoInteger operator <<(int times) {
@@ -226,46 +145,42 @@ class LexoInteger implements Comparable<LexoInteger> {
     if (times < 0) {
       return this >> times.abs();
     }
-    final List<int> nmag = List.filled(mag.length + times, 0);
-    lexo_helper.arrayCopy(mag, 0, nmag, times, mag.length);
-    return LexoInteger.make(system, sign, nmag);
+    final List<int> nmag = List.filled(mag.value.length + times, 0);
+    utils.arrayCopy(mag.value, 0, nmag, times, mag.value.length);
+    return LexoInteger.make(LexoMagnitude(system, nmag), sign);
   }
 
   LexoInteger operator >>(int times) {
-    if (mag.length - times <= 0) {
+    if (mag.value.length - times <= 0) {
       return LexoInteger.zero(system);
     }
-    final List<int> nmag = List.filled(mag.length - times, 0);
-    lexo_helper.arrayCopy(mag, times, nmag, 0, nmag.length);
-    return LexoInteger.make(system, sign, nmag);
+    final List<int> nmag = List.filled(mag.value.length - times, 0);
+    utils.arrayCopy(mag.value, times, nmag, 0, nmag.length);
+    return LexoInteger.make(LexoMagnitude(system, nmag), sign);
   }
 
   LexoInteger operator ~() {
-    return complementDigits(mag.length);
+    return complementDigits(mag.value.length);
   }
 
   LexoInteger complementDigits(int digits) {
-    return LexoInteger.make(
-      system,
-      sign,
-      LexoInteger.Complement(system, mag, digits),
-    );
+    return LexoInteger.make(mag.complement(digits), sign);
   }
 
   bool get isZero {
-    return sign == 0 && mag.length == 1 && mag[0] == 0;
+    return sign == 0 && mag.value.length == 1 && mag.value[0] == 0;
   }
 
   bool get isOne {
-    return sign == 1 && mag.length == 1 && mag[0] == 1;
+    return sign == 1 && mag.value.length == 1 && mag.value[0] == 1;
   }
 
   bool get isOneish {
-    return mag.length == 1 && mag[0] == 1;
+    return mag.value.length == 1 && mag.value[0] == 1;
   }
 
   int getMag(int index) {
-    return mag[index];
+    return mag.value[index];
   }
 
   @override
@@ -278,7 +193,7 @@ class LexoInteger implements Comparable<LexoInteger> {
     }
     if (sign == -1) {
       if (other.sign == -1) {
-        final int cmp = LexoInteger.compare(mag, other.mag);
+        final int cmp = mag.compareTo(other.mag);
         if (cmp == -1) {
           return 1;
         }
@@ -287,7 +202,7 @@ class LexoInteger implements Comparable<LexoInteger> {
       return -1;
     }
     if (sign == 1) {
-      return other.sign == 1 ? LexoInteger.compare(mag, other.mag) : 1;
+      return other.sign == 1 ? mag.compareTo(other.mag) : 1;
     }
     if (other.sign == -1) {
       return 1;
@@ -300,7 +215,7 @@ class LexoInteger implements Comparable<LexoInteger> {
       return '' + system.toChar(0);
     }
     final StringBuilder sb = StringBuilder('');
-    final List<int> var2 = mag;
+    final List<int> var2 = mag.value;
     final int var3 = var2.length;
     for (int var4 = 0; var4 < var3; ++var4) {
       final int digit = var2[var4];

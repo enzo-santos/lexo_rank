@@ -31,7 +31,7 @@ class LexoRank {
 
   factory LexoRank.middle() {
     final LexoRank minLexoRank = LexoRank.min();
-    return minLexoRank.between(LexoRank.max(minLexoRank.bucket));
+    return minLexoRank.genBetween(LexoRank.max(minLexoRank.bucket));
   }
 
   factory LexoRank.max(LexoRankBucket bucket) {
@@ -44,7 +44,22 @@ class LexoRank {
         : LexoRank.from(bucket, LexoRank.initialMaxDecimal);
   }
 
-  static LexoDecimal Between(LexoDecimal oLeft, LexoDecimal oRight) {
+  factory LexoRank.parse(String str) {
+    final List<String> parts = str.split('|');
+    final LexoRankBucket bucket = LexoRankBucket.from(parts[0]);
+    final LexoDecimal decimal =
+        LexoDecimal.parse(parts[1], LexoRank.numeralSystem);
+    return LexoRank(bucket, decimal);
+  }
+
+  factory LexoRank.from(LexoRankBucket bucket, LexoDecimal decimal) {
+    if (decimal.system.base != LexoRank.numeralSystem.base) {
+      throw AssertionError('Expected different system');
+    }
+    return LexoRank(bucket, decimal);
+  }
+
+  static LexoDecimal between(LexoDecimal oLeft, LexoDecimal oRight) {
     if (oLeft.system.base != oRight.system.base) {
       throw AssertionError('Expected same system');
     }
@@ -91,21 +106,6 @@ class LexoRank {
       mid = nMid;
     }
     return mid;
-  }
-
-  factory LexoRank.parse(String str) {
-    final List<String> parts = str.split('|');
-    final LexoRankBucket bucket = LexoRankBucket.from(parts[0]);
-    final LexoDecimal decimal =
-        LexoDecimal.parse(parts[1], LexoRank.numeralSystem);
-    return LexoRank(bucket, decimal);
-  }
-
-  factory LexoRank.from(LexoRankBucket bucket, LexoDecimal decimal) {
-    if (decimal.system.base != LexoRank.numeralSystem.base) {
-      throw AssertionError('Expected different system');
-    }
-    return LexoRank(bucket, decimal);
   }
 
   static LexoDecimal middleInternal(
@@ -180,7 +180,7 @@ class LexoRank {
     final LexoDecimal floorDecimal = LexoDecimal.from(floorInteger);
     LexoDecimal nextDecimal = floorDecimal - LexoRank.eightDecimal;
     if (nextDecimal.compareTo(LexoRank.minDecimal) <= 0) {
-      nextDecimal = LexoRank.Between(LexoRank.minDecimal, decimal);
+      nextDecimal = LexoRank.between(LexoRank.minDecimal, decimal);
     }
     return LexoRank(bucket, nextDecimal);
   }
@@ -193,18 +193,18 @@ class LexoRank {
     final LexoDecimal ceilDecimal = LexoDecimal.from(ceilInteger);
     LexoDecimal nextDecimal = ceilDecimal + LexoRank.eightDecimal;
     if (nextDecimal.compareTo(LexoRank.maxDecimal) >= 0) {
-      nextDecimal = LexoRank.Between(decimal, LexoRank.maxDecimal);
+      nextDecimal = LexoRank.between(decimal, LexoRank.maxDecimal);
     }
     return LexoRank(bucket, nextDecimal);
   }
 
-  LexoRank between(LexoRank other) {
+  LexoRank genBetween(LexoRank other) {
     if (bucket != other.bucket) {
       throw AssertionError('Between works only within the same bucket');
     }
     final int cmp = decimal.compareTo(other.decimal);
     if (cmp > 0) {
-      return LexoRank(bucket, LexoRank.Between(other.decimal, decimal));
+      return LexoRank(bucket, LexoRank.between(other.decimal, decimal));
     }
     if (cmp == 0) {
       throw AssertionError('Try to rank between issues with same rank this=' +
@@ -216,7 +216,7 @@ class LexoRank {
           ' other.decimal=' +
           other.decimal.toString());
     }
-    return LexoRank(bucket, LexoRank.Between(decimal, other.decimal));
+    return LexoRank(bucket, LexoRank.between(decimal, other.decimal));
   }
 
   LexoRank inNextBucket() {

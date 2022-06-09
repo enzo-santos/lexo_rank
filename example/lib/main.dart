@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     TextButton(
                       onPressed: () {
                         setState(() {
-                          middleLexoRank = prevLexoRank!.between(nextLexoRank!);
+                          middleLexoRank = prevLexoRank!.genBetween(nextLexoRank!);
                         });
                       },
                       child: const Text("Generate middle"),

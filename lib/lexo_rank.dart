@@ -7,7 +7,7 @@ import '../utils/string_builder.dart';
 import 'lexo_rank/lexo_decimal.dart';
 import 'lexo_rank/lexo_rank_bucket.dart';
 
-class LexoRank {
+class LexoRank implements Comparable<LexoRank> {
   static const LexoNumeralSystem36 numeralSystem = LexoNumeralSystem36();
   static const LexoDecimal zeroDecimal =
       LexoDecimal(LexoInteger(numeralSystem, 0, [0]), 0);
@@ -173,7 +173,7 @@ class LexoRank {
       : value = bucket.format() + '|' + LexoRank.formatDecimal(decimal);
 
   LexoRank genPrev() {
-    if (isMax()) {
+    if (isMax) {
       return LexoRank(bucket, LexoRank.initialMaxDecimal);
     }
     final LexoInteger floorInteger = decimal.floor();
@@ -186,7 +186,7 @@ class LexoRank {
   }
 
   LexoRank genNext() {
-    if (isMin()) {
+    if (isMin) {
       return LexoRank(bucket, LexoRank.initialMinDecimal);
     }
     final LexoInteger ceilInteger = decimal.ceil();
@@ -227,11 +227,11 @@ class LexoRank {
     return LexoRank.from(bucket.prev(), decimal);
   }
 
-  bool isMin() {
+  bool get isMin {
     return decimal == LexoRank.minDecimal;
   }
 
-  bool isMax() {
+  bool get isMax {
     return decimal == LexoRank.maxDecimal;
   }
 
@@ -239,28 +239,26 @@ class LexoRank {
     return value;
   }
 
-  bool equals(LexoRank other) {
-    if (identical(this, other)) {
-      return true;
-    }
-    // if (!other) {
-    //   return false;
-    // }
-    return value == other.value;
-  }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LexoRank &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
 
   @override
   String toString() {
     return value;
   }
 
-  num compareTo(LexoRank other) {
+  @override
+  int compareTo(LexoRank other) {
     if (identical(this, other)) {
       return 0;
     }
-    // if (!other) {
-    //   return 1;
-    // }
     return value.compareTo(other.value);
   }
 }

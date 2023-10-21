@@ -39,7 +39,7 @@ class LexoRankBucket {
       }
     }
 
-    throw AssertionError('Unknown bucket: ' + str);
+    throw AssertionError('Unknown bucket: $str');
   }
 
   factory LexoRankBucket.resolve(int bucketId) {
@@ -51,7 +51,7 @@ class LexoRankBucket {
         return bucket;
       }
     }
-    throw AssertionError('No bucket found with id ' + bucketId.toString());
+    throw AssertionError('No bucket found with id $bucketId');
   }
 
   final LexoInteger value;

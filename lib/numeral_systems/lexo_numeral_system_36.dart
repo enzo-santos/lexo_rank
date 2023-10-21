@@ -72,7 +72,7 @@ class LexoNumeralSystem36 implements LexoNumeralSystem {
         ch.codeUnitAt(0) <= 'z'.codeUnitAt(0)) {
       return ch.codeUnitAt(0) - 97 + 10;
     }
-    throw AssertionError('Not valid digit: ' + ch);
+    throw AssertionError('Not valid digit: $ch');
   }
 
   @override

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:lexo_rank/lexo_rank.dart';
+
+typedef LexoItem = ({String rank, String value});
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,92 +18,87 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Lexo Rank '),
+      home: const MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  LexoRank initialLexoRank = LexoRank.middle();
-  LexoRank? prevLexoRank;
-  LexoRank? nextLexoRank;
-  LexoRank? middleLexoRank;
+class MyHomePage extends HookWidget {
+  const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final items = useState<List<LexoItem>>([]);
+
+    final itemValueController = useTextEditingController();
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text('Lexo Rank'),
       ),
-      body: Center(
-          child: Column(
+      body: Column(
         children: [
-          Row(
-            children: [
-              TextButton(
-                onPressed: () {
-                  LexoRank rank = LexoRank.middle();
-                  setState(() {
-                    initialLexoRank = rank;
-                  });
-                },
-                child: const Text("Generate middle"),
-              ),
-              Text(initialLexoRank.value),
-            ],
+          SizedBox(
+            width: 300,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: itemValueController,
+                  ),
+                ),
+                TextButton(
+                    onPressed: () {
+                      final lastRank = (items.value.isEmpty)
+                          ? LexoRank.middle()
+                          : LexoRank.parse(items.value.last.rank).genNext();
+
+                      items.value = [
+                        ...items.value,
+                        (rank: lastRank.value, value: itemValueController.text)
+                      ];
+
+                      itemValueController.clear();
+                    },
+                    child: const Text('Add')),
+              ],
+            ),
           ),
-          Row(
-            children: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    prevLexoRank = initialLexoRank.genPrev();
-                  });
-                },
-                child: const Text("Generate previous"),
-              ),
-              Text(prevLexoRank?.value ?? ""),
-            ],
-          ),
-          Row(
-            children: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    nextLexoRank = initialLexoRank.genNext();
-                  });
-                },
-                child: const Text("Generate next"),
-              ),
-              Text(nextLexoRank?.value ?? ""),
-            ],
-          ),
-          prevLexoRank != null && nextLexoRank != null
-              ? Row(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          middleLexoRank = prevLexoRank!.genBetween(nextLexoRank!);
-                        });
-                      },
-                      child: const Text("Generate middle"),
-                    ),
-                    Text(middleLexoRank?.value ?? ""),
-                  ],
-                )
-              : Container(),
+          Expanded(
+            child: ReorderableListView(
+              children: items.value
+                  .map((e) => ListTile(
+                        key: ValueKey(e.rank),
+                        title: Text(e.value),
+                        subtitle: Text(e.rank),
+                      ))
+                  .toList(),
+              onReorder: (oldIndex, newIndex) {
+                final LexoRank newRank;
+                if (newIndex == 0) {
+                  newRank =
+                      LexoRank.parse(items.value[newIndex].rank).genPrev();
+                } else if (newIndex == items.value.length) {
+                  newRank =
+                      LexoRank.parse(items.value[newIndex - 1].rank).genNext();
+                } else {
+                  newRank = LexoRank.parse(items.value[newIndex - 1].rank)
+                      .genBetween(LexoRank.parse(items.value[newIndex].rank));
+                }
+
+                final newList = items.value.toList();
+                newList[oldIndex] =
+                    (rank: newRank.value, value: newList[oldIndex].value);
+
+                items.value = newList
+                  ..sort(
+                    (a, b) => a.rank.compareTo(b.rank),
+                  );
+              },
+            ),
+          )
         ],
-      )),
+      ),
     );
   }
 }

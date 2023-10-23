@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:lexo_rank/lexo_rank.dart';
+import 'package:lexo_rank/lexo_rank/lexo_rank_bucket.dart';
 
 typedef LexoItem = ({String rank, String value});
 
@@ -50,7 +51,7 @@ class MyHomePage extends HookWidget {
                 TextButton(
                     onPressed: () {
                       final lastRank = (items.value.isEmpty)
-                          ? LexoRank.middle()
+                          ? LexoRank.middle(bucket: LexoRankBucket.bucket2)
                           : LexoRank.parse(items.value.last.rank).genNext();
 
                       items.value = [

@@ -52,12 +52,12 @@ class LexoRank implements Comparable<LexoRank> {
     scale: 0,
   );
 
-  factory LexoRank.min() {
-    return LexoRank.from(LexoRankBucket.bucket0, LexoRank.minDecimal);
+  factory LexoRank.min({LexoRankBucket bucket = LexoRankBucket.bucket0}) {
+    return LexoRank.from(bucket, LexoRank.minDecimal);
   }
 
-  factory LexoRank.middle() {
-    final LexoRank minLexoRank = LexoRank.min();
+  factory LexoRank.middle({LexoRankBucket bucket = LexoRankBucket.bucket0}) {
+    final LexoRank minLexoRank = LexoRank.min(bucket: bucket);
     return minLexoRank.genBetween(LexoRank.max(minLexoRank.bucket));
   }
 

@@ -34,7 +34,7 @@ class LexoRankBucket {
     final int var3 = var2.length;
     for (int var4 = 0; var4 < var3; ++var4) {
       final LexoRankBucket bucket = var2[var4];
-      if (bucket.value.sign == val.sign) {
+      if (bucket.value == val) {
         return bucket;
       }
     }

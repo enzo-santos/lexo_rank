@@ -52,12 +52,12 @@ class LexoRank implements Comparable<LexoRank> {
     scale: 0,
   );
 
-  factory LexoRank.min() {
-    return LexoRank.from(LexoRankBucket.bucket0, LexoRank.minDecimal);
+  factory LexoRank.min({LexoRankBucket bucket = LexoRankBucket.bucket0}) {
+    return LexoRank.from(bucket, LexoRank.minDecimal);
   }
 
-  factory LexoRank.middle() {
-    final LexoRank minLexoRank = LexoRank.min();
+  factory LexoRank.middle({LexoRankBucket bucket = LexoRankBucket.bucket0}) {
+    final LexoRank minLexoRank = LexoRank.min(bucket: bucket);
     return minLexoRank.genBetween(LexoRank.max(minLexoRank.bucket));
   }
 
@@ -197,7 +197,7 @@ class LexoRank implements Comparable<LexoRank> {
   final LexoDecimal decimal;
 
   LexoRank(this.bucket, this.decimal)
-      : value = bucket.format() + '|' + LexoRank.formatDecimal(decimal);
+      : value = '${bucket.format()}|${LexoRank.formatDecimal(decimal)}';
 
   LexoRank genPrev() {
     if (isMax) {
@@ -234,14 +234,11 @@ class LexoRank implements Comparable<LexoRank> {
       return LexoRank(bucket, LexoRank.between(other.decimal, decimal));
     }
     if (cmp == 0) {
-      throw AssertionError('Try to rank between issues with same rank this=' +
-          toString() +
-          ' other=' +
-          other.toString() +
-          ' this.decimal=' +
-          decimal.toString() +
-          ' other.decimal=' +
-          other.decimal.toString());
+      throw AssertionError('Try to rank between issues with same rank '
+          'this=${toString()} '
+          'other=$other '
+          'this.decimal=$decimal '
+          'other.decimal=${other.decimal}');
     }
     return LexoRank(bucket, LexoRank.between(decimal, other.decimal));
   }

@@ -13,7 +13,7 @@ class LexoDecimal implements Comparable<LexoDecimal> {
   factory LexoDecimal.parse(String str, LexoNumeralSystem system) {
     final int partialIndex = str.indexOf(system.radixPointChar);
     if (str.lastIndexOf(system.radixPointChar) != partialIndex) {
-      throw AssertionError('More than one ' + system.radixPointChar);
+      throw AssertionError('More than one ${system.radixPointChar}');
     }
     if (partialIndex < 0) {
       return LexoDecimal.make(LexoInteger.parse(str, system), 0);

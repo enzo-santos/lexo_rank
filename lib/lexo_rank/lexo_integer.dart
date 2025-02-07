@@ -209,7 +209,7 @@ class LexoInteger implements Comparable<LexoInteger> {
 
   String format() {
     if (isZero) {
-      return '' + system.toChar(0);
+      return system.toChar(0);
     }
     final StringBuilder sb = StringBuilder('');
     final List<int> var2 = magnitude.value;
